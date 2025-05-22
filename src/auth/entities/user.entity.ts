@@ -64,6 +64,52 @@ export class UserEntity {
   isActive: boolean;
 
   @ApiProperty({
+    description: 'Whether the user email has been verified',
+    default: false,
+  })
+  @Column({ default: false })
+  isEmailVerified: boolean;
+
+  @ApiProperty({
+    description: 'Token for email verification',
+    readOnly: true,
+  })
+  @Column({ nullable: true })
+  @Exclude()
+  emailVerificationToken: string;
+
+  @ApiProperty({
+    description: 'Expiration date for the email verification token',
+    readOnly: true,
+  })
+  @Column({ nullable: true })
+  @Exclude()
+  emailVerificationExpires: Date;
+
+  @ApiProperty({
+    description: 'Whether the user phone has been verified',
+    default: false,
+  })
+  @Column({ default: false })
+  isPhoneVerified: boolean;
+
+  @ApiProperty({
+    description: 'Phone verification code',
+    readOnly: true,
+  })
+  @Column({ nullable: true })
+  @Exclude()
+  phoneVerificationCode: string;
+
+  @ApiProperty({
+    description: 'Expiration date for the phone verification code',
+    readOnly: true,
+  })
+  @Column({ nullable: true })
+  @Exclude()
+  phoneVerificationExpires: Date;
+
+  @ApiProperty({
     description: 'Refresh token for JWT authentication',
     readOnly: true,
   })
@@ -87,7 +133,6 @@ export class UserEntity {
   updatedAt: Date;
 
   @BeforeInsert()
-  @BeforeUpdate()
   async hashPassword() {
     if (this.password) {
       const salt = await bcrypt.genSalt();
@@ -95,7 +140,19 @@ export class UserEntity {
     }
   }
 
+  @BeforeUpdate()
+  async hashPasswordIfChanged() {
+    // Only hash password if it's explicitly modified during an update
+    if (this.password && this.password.indexOf('$2b$') !== 0) {
+      const salt = await bcrypt.genSalt();
+      this.password = await bcrypt.hash(this.password, salt);
+    }
+  }
+
   async validatePassword(password: string): Promise<boolean> {
+    if (!this.password) {
+      return false;
+    }
     return bcrypt.compare(password, this.password);
   }
 }

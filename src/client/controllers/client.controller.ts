@@ -8,6 +8,7 @@ import {
   Param,
   UseGuards,
   BadRequestException,
+  Patch,
 } from '@nestjs/common';
 import { ClientService } from '../services/client.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -17,6 +18,17 @@ import { UserRole } from '../../auth/entities/user.entity';
 import { CreateClientProfileDto } from '../dtos/create-client-profile.dto';
 import { UpdateClientProfileDto } from '../dtos/update-client-profile.dto';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { OnboardingStep1ProfileDto } from '../dtos/onboarding-step1-profile.dto';
+import { OnboardingStep2FitnessGoalsDto } from '../dtos/onboarding-step2-fitness-goals.dto';
+import { OnboardingStep3DietaryDto } from '../dtos/onboarding-step3-dietary.dto';
+import { OnboardingStep4HealthDto } from '../dtos/onboarding-step4-health.dto';
+import { OnboardingStep5PreferencesDto } from '../dtos/onboarding-step5-preferences.dto';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @Controller('clients')
 export class ClientController {
@@ -87,5 +99,75 @@ export class ClientController {
   async delete(@Param('id') id: string) {
     await this.clientService.delete(id);
     return { message: 'Client profile deleted successfully' };
+  }
+
+  @ApiOperation({ summary: 'Step 1: Basic profile info' })
+  @ApiResponse({ status: 200, description: 'Profile info updated' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: OnboardingStep1ProfileDto })
+  @Patch('onboarding/profile')
+  async onboardingProfile(
+    @CurrentUser() user,
+    @Body() dto: OnboardingStep1ProfileDto,
+  ) {
+    const clientProfile = await this.clientService.updateByUserId(user.id, dto);
+    return { clientProfile };
+  }
+
+  @ApiOperation({ summary: 'Step 2: Fitness goals' })
+  @ApiResponse({ status: 200, description: 'Fitness goals updated' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: OnboardingStep2FitnessGoalsDto })
+  @Patch('onboarding/fitness-goals')
+  async onboardingFitnessGoals(
+    @CurrentUser() user,
+    @Body() dto: OnboardingStep2FitnessGoalsDto,
+  ) {
+    const clientProfile = await this.clientService.updateByUserId(user.id, dto);
+    return { clientProfile };
+  }
+
+  @ApiOperation({ summary: 'Step 3: Dietary habits' })
+  @ApiResponse({ status: 200, description: 'Dietary habits updated' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: OnboardingStep3DietaryDto })
+  @Patch('onboarding/dietary-habits')
+  async onboardingDietaryHabits(
+    @CurrentUser() user,
+    @Body() dto: OnboardingStep3DietaryDto,
+  ) {
+    const clientProfile = await this.clientService.updateByUserId(user.id, dto);
+    return { clientProfile };
+  }
+
+  @ApiOperation({ summary: 'Step 4: Health conditions' })
+  @ApiResponse({ status: 200, description: 'Health conditions updated' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: OnboardingStep4HealthDto })
+  @Patch('onboarding/health-conditions')
+  async onboardingHealthConditions(
+    @CurrentUser() user,
+    @Body() dto: OnboardingStep4HealthDto,
+  ) {
+    const clientProfile = await this.clientService.updateByUserId(user.id, dto);
+    return { clientProfile };
+  }
+
+  @ApiOperation({ summary: 'Step 5: Preferences & Logistics' })
+  @ApiResponse({ status: 200, description: 'Preferences updated' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: OnboardingStep5PreferencesDto })
+  @Patch('onboarding/preferences')
+  async onboardingPreferences(
+    @CurrentUser() user,
+    @Body() dto: OnboardingStep5PreferencesDto,
+  ) {
+    const clientProfile = await this.clientService.updateByUserId(user.id, dto);
+    return { clientProfile };
   }
 }

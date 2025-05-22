@@ -58,6 +58,24 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+## Database Migrations
+
+This project uses TypeORM migrations for database schema version control.
+
+```bash
+# Generate a new migration based on entity changes
+$ npm run migration:generate -- src/database/migrations/MigrationName
+
+# Create an empty migration file
+$ npm run migration:create -- src/database/migrations/MigrationName
+
+# Run pending migrations
+$ npm run migration:run
+
+# Revert the last migration
+$ npm run migration:revert
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

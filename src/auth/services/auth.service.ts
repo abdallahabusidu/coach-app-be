@@ -60,6 +60,7 @@ export class AuthService {
     }
 
     // Validate password
+    console.log('isPasswordValid', loginDto.password);
     const isPasswordValid = await user.validatePassword(loginDto.password);
 
     if (!isPasswordValid) {
@@ -148,9 +149,16 @@ export class AuthService {
     const refreshTokenExpires = new Date();
     refreshTokenExpires.setDate(refreshTokenExpires.getDate() + 7); // Default 7 days
 
-    user.refreshToken = refreshToken;
-    user.refreshTokenExpires = refreshTokenExpires;
-    await this.userRepository.save(user);
+    // Use query builder to update only the refresh token fields without triggering hooks
+    await this.userRepository
+      .createQueryBuilder()
+      .update(UserEntity)
+      .set({
+        refreshToken: refreshToken,
+        refreshTokenExpires: refreshTokenExpires,
+      })
+      .where('id = :id', { id: user.id })
+      .execute();
 
     return refreshToken;
   }
@@ -164,8 +172,17 @@ export class AuthService {
     const accessToken = this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
 
+    // Fetch fresh user data to avoid any password rehashing
+    const freshUser = await this.userRepository.findOne({
+      where: { id: user.id },
+    });
+
     // Create a safe user response object without sensitive data
-    const { password, refreshToken: userRefreshToken, ...userResponse } = user;
+    const {
+      password,
+      refreshToken: userRefreshToken,
+      ...userResponse
+    } = freshUser;
 
     return {
       user: userResponse,

@@ -5,14 +5,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { UserEntity } from './entities/user.entity';
 import { AuthController } from './controllers/auth.controller';
+import { VerificationController } from './controllers/verification.controller';
 import { AuthService } from './services/auth.service';
+import { VerificationService } from './services/verification.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RolesGuard } from './guards/roles.guard';
 import { LocalStrategy } from './strategies/local.strategy';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
+    CommonModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -28,8 +32,14 @@ import { LocalStrategy } from './strategies/local.strategy';
       }),
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy, RolesGuard],
+  controllers: [AuthController, VerificationController],
+  providers: [
+    AuthService,
+    VerificationService,
+    JwtStrategy,
+    LocalStrategy,
+    RolesGuard,
+  ],
   exports: [
     AuthService,
     JwtStrategy,

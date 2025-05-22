@@ -36,4 +36,82 @@ export class UpdateClientProfileDto {
   @IsString()
   @IsOptional()
   profilePictureUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  gender?: string;
+
+  @IsString()
+  @IsOptional()
+  location?: string;
+
+  @IsString()
+  @IsOptional()
+  fitnessGoal?: string;
+
+  @IsString()
+  @IsOptional()
+  fitnessLevel?: string;
+
+  @IsString()
+  @IsOptional()
+  bodyShape?: string;
+
+  @IsNumber()
+  @IsOptional()
+  mealsPerDay?: number;
+
+  @IsOptional()
+  specificDiet?: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  exerciseFrequency?: number;
+
+  @IsNumber()
+  @IsOptional()
+  sessionDuration?: number;
+
+  @IsOptional()
+  gymAccess?: boolean;
+
+  @IsString()
+  @IsOptional()
+  healthConsiderations?: string;
+
+  @IsString()
+  @IsOptional()
+  allergies?: string;
+
+  @IsOptional()
+  medications?: boolean;
+
+  @IsOptional()
+  medicalConditions?: boolean;
+
+  @IsString()
+  @IsOptional()
+  medicalConditionsDescription?: string;
+
+  @IsOptional()
+  smoke?: boolean;
+
+  @IsOptional()
+  drinkAlcohol?: boolean;
+
+  @IsString()
+  @IsOptional()
+  coachGenderPreference?: string;
+
+  @IsString()
+  @IsOptional()
+  coachingMode?: string;
+
+  @IsString()
+  @IsOptional()
+  budget?: string;
+
+  @IsString()
+  @IsOptional()
+  preferredTime?: string;
 }

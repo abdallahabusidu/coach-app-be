@@ -8,16 +8,24 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { CoachModule } from './coach/coach.module';
 import { ClientModule } from './client/client.module';
+import { CommonModule } from './common/common.module';
 import { JwtAuthGuardGlobal } from './auth/guards/jwt-auth-global.guard';
+import { FeatureModule } from './feature/feature.module';
+import { TargetAudienceModule } from './target-audience/target-audience.module';
+import { DiscountModule } from './discount/discount.module';
 
 @Module({
   imports: [
     ConfigModule,
     DatabaseModule,
+    CommonModule,
     AuthModule,
     UserModule,
     CoachModule,
     ClientModule,
+    FeatureModule,
+    TargetAudienceModule,
+    DiscountModule,
   ],
   controllers: [AppController],
   providers: [
