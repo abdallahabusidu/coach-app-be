@@ -36,10 +36,10 @@ export class AuthService {
     }
 
     // Create new user
-    const user = this.userRepository.create(registerDto);
+    let user = this.userRepository.create(registerDto);
 
-    // Save user
-    await this.userRepository.save(user);
+    // Save user and assign the returned entity (which should have the ID) back to user
+    user = await this.userRepository.save(user);
 
     // Generate auth response with tokens
     return await this.generateAuthResponse(user);
@@ -60,7 +60,6 @@ export class AuthService {
     }
 
     // Validate password
-    console.log('isPasswordValid', loginDto.password);
     const isPasswordValid = await user.validatePassword(loginDto.password);
 
     if (!isPasswordValid) {
@@ -225,6 +224,9 @@ export class AuthService {
         refreshToken: newRefreshToken,
       };
     } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error; // Re-throw the original UnauthorizedException
+      }
       throw new UnauthorizedException('Invalid refresh token');
     }
   }

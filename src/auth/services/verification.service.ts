@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
-import { v4 as uuidv4 } from 'uuid';
 import {
   VerifyEmailDto,
   RequestEmailVerificationDto,
@@ -18,6 +17,16 @@ import {
 } from '../dtos/verify-phone.dto';
 import { EmailService } from '../../common/services/email.service';
 import { SmsService } from '../../common/services/sms.service';
+
+// Global function for random code generation
+function generateRandomCode(length: number, characters: string): string {
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 @Injectable()
 export class VerificationService {
@@ -38,12 +47,14 @@ export class VerificationService {
       throw new NotFoundException('User not found');
     }
 
-    // Generate a verification token
-    const token = uuidv4();
+    // Generate a 6-character alphanumeric verification token
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const token = generateRandomCode(6, characters);
 
-    // Set token expiration to 24 hours from now
+    // Set token expiration to 5 minutes from now
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 24);
+    expiresAt.setMinutes(expiresAt.getMinutes() + 5);
 
     // Update the user record with the token and expiration
     user.emailVerificationToken = token;
@@ -130,8 +141,9 @@ export class VerificationService {
       throw new NotFoundException('User not found');
     }
 
-    // Generate a 6-digit code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate a 6-letter code
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const code = generateRandomCode(6, characters);
 
     // Set code expiration to 10 minutes from now
     const expiresAt = new Date();

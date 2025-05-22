@@ -1,30 +1,29 @@
 import {
   Body,
   Controller,
-  Post,
-  UseGuards,
-  ValidationPipe,
-  Request,
   HttpCode,
   HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
-import { RegisterDto } from '../dtos/register.dto';
+import {
+  ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Public } from '../decorators/public.decorator';
+import { AuthResponseDto, TokenResponseDto } from '../dtos/auth-response.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
-import { AuthResponseDto, TokenResponseDto } from '../dtos/auth-response.dto';
-import { Public } from '../decorators/public.decorator';
+import { RegisterDto } from '../dtos/register.dto';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-  ApiCreatedResponse,
-  ApiUnauthorizedResponse,
-  ApiConflictResponse,
-  ApiOkResponse,
-} from '@nestjs/swagger';
+import { AuthService } from '../services/auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
