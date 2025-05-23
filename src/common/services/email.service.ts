@@ -22,11 +22,7 @@ export class EmailService {
     const emailUser = this.configService.get('EMAIL_USER');
     const emailPassword = this.configService.get('EMAIL_PASSWORD');
 
-    if (
-      emailUser &&
-      emailPassword &&
-      this.configService.get('NODE_ENV') !== 'development'
-    ) {
+    if (emailUser && emailPassword) {
       // Use Gmail SMTP (you can change this to other providers)
       this.transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -35,6 +31,12 @@ export class EmailService {
           pass: emailPassword,
         },
       });
+
+      this.logger.log('Email transporter initialized successfully');
+    } else {
+      this.logger.warn(
+        'Email credentials not found, emails will only be logged',
+      );
     }
   }
 
@@ -45,11 +47,8 @@ export class EmailService {
    */
   async sendEmail(options: EmailOptions): Promise<boolean> {
     try {
-      // For development, just log the email
-      if (
-        this.configService.get('NODE_ENV') === 'development' ||
-        !this.transporter
-      ) {
+      // If no transporter, just log the email
+      if (!this.transporter) {
         this.logger.debug(`
           -------------------------
           EMAIL SENT (DEVELOPMENT)

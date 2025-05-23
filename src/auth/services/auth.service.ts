@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,13 +11,17 @@ import { Repository } from 'typeorm';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { UserEntity } from '../entities/user.entity';
+import { VerificationService } from './verification.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly jwtService: JwtService,
+    private readonly verificationService: VerificationService,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<{
@@ -40,6 +45,21 @@ export class AuthService {
 
     // Save user and assign the returned entity (which should have the ID) back to user
     user = await this.userRepository.save(user);
+
+    // Automatically send verification email after successful registration
+    try {
+      await this.verificationService.requestEmailVerification({
+        email: user.email,
+      });
+      this.logger.log(
+        `Verification email sent to ${user.email} after registration`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to send verification email after registration: ${error.message}`,
+      );
+      // Don't fail the registration if email sending fails
+    }
 
     // Generate auth response with tokens
     return await this.generateAuthResponse(user);
