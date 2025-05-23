@@ -8,6 +8,7 @@ import { AuthController } from './controllers/auth.controller';
 import { VerificationController } from './controllers/verification.controller';
 import { AuthService } from './services/auth.service';
 import { VerificationService } from './services/verification.service';
+import { PendingRegistrationService } from './services/pending-registration.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RolesGuard } from './guards/roles.guard';
 import { LocalStrategy } from './strategies/local.strategy';
@@ -36,6 +37,7 @@ import { CommonModule } from '../common/common.module';
   providers: [
     AuthService,
     VerificationService,
+    PendingRegistrationService,
     JwtStrategy,
     LocalStrategy,
     RolesGuard,

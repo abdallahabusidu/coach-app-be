@@ -17,6 +17,7 @@ import {
 } from '../dtos/verify-phone.dto';
 import { EmailService } from '../../common/services/email.service';
 import { SmsService } from '../../common/services/sms.service';
+import { PendingRegistrationService } from './pending-registration.service';
 
 // Global function for random code generation
 function generateRandomCode(length: number, characters: string): string {
@@ -37,6 +38,7 @@ export class VerificationService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly emailService: EmailService,
     private readonly smsService: SmsService,
+    private readonly pendingRegistrationService: PendingRegistrationService,
   ) {}
 
   // Email verification methods
@@ -65,6 +67,16 @@ export class VerificationService {
     // In a real application, this would send an email with the token
     // For testing purposes, we'll just return the token
     return token;
+  }
+
+  /**
+   * Generate verification token for pending registration (DEPRECATED)
+   * @deprecated Use OTP-based verification instead
+   */
+  generatePendingRegistrationToken(): string {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    return generateRandomCode(8, characters); // Longer token for pending registrations
   }
 
   async requestEmailVerification(
@@ -108,7 +120,15 @@ export class VerificationService {
     }
   }
 
-  async verifyEmail(dto: VerifyEmailDto): Promise<{ message: string }> {
+  async verifyEmail(dto: VerifyEmailDto): Promise<{
+    message: string;
+    user?: Partial<UserEntity>;
+    accessToken?: string;
+    refreshToken?: string;
+  }> {
+    // Note: Pending registrations now use OTP verification through the new auth/verify-otp endpoint
+    // This method now only handles existing user email verification
+
     const user = await this.userRepository.findOne({
       where: { emailVerificationToken: dto.token },
     });

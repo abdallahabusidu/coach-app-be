@@ -152,4 +152,15 @@ export class EmailService {
       text: `Hello ${userName}, your ${purpose} code is: ${otp}. This code will expire in ${expiryMinutes} minutes.`,
     });
   }
+
+  /**
+   * Send OTP email specifically for registration verification
+   */
+  async sendOtpEmail(
+    email: string,
+    otp: string,
+    userName: string = 'User',
+  ): Promise<boolean> {
+    return this.sendOTP(email, otp, 'email verification', userName, 15); // 15 minutes expiry for registration
+  }
 }

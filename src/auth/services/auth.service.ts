@@ -12,6 +12,10 @@ import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { UserEntity } from '../entities/user.entity';
 import { VerificationService } from './verification.service';
+import { PendingRegistrationService } from './pending-registration.service';
+import { PendingRegistrationResponseDto } from '../dtos/pending-registration.dto';
+import { PreAuthRegistrationResponseDto } from '../dtos/preauth-registration.dto';
+import { EmailService } from '../../common/services/email.service';
 
 @Injectable()
 export class AuthService {
@@ -22,14 +26,14 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly jwtService: JwtService,
     private readonly verificationService: VerificationService,
+    private readonly pendingRegistrationService: PendingRegistrationService,
+    private readonly emailService: EmailService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<{
-    user: Partial<UserEntity>;
-    accessToken: string;
-    refreshToken: string;
-  }> {
-    // Check if user exists with email or phone
+  async register(
+    registerDto: RegisterDto,
+  ): Promise<PreAuthRegistrationResponseDto> {
+    // Check if user already exists with email or phone
     const existingUser = await this.userRepository.findOne({
       where: [{ email: registerDto.email }, { phone: registerDto.phone }],
     });
@@ -40,29 +44,78 @@ export class AuthService {
       );
     }
 
-    // Create new user
-    let user = this.userRepository.create(registerDto);
+    // Generate 6-digit OTP
+    const otp = this.generateOtp();
 
-    // Save user and assign the returned entity (which should have the ID) back to user
-    user = await this.userRepository.save(user);
+    // Generate preAuthToken (JWT containing email and expiration)
+    const preAuthToken = this.generatePreAuthToken(registerDto.email);
 
-    // Automatically send verification email after successful registration
-    try {
-      await this.verificationService.requestEmailVerification({
-        email: user.email,
-      });
-      this.logger.log(
-        `Verification email sent to ${user.email} after registration`,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to send verification email after registration: ${error.message}`,
-      );
-      // Don't fail the registration if email sending fails
+    // Check if there's already a pending registration for this email
+    const existingPending =
+      this.pendingRegistrationService.getPendingRegistration(registerDto.email);
+    if (
+      existingPending &&
+      !this.pendingRegistrationService.isExpired(existingPending)
+    ) {
+      // If there's a non-expired pending registration, just resend the email with new OTP
+      try {
+        await this.emailService.sendOtpEmail(
+          registerDto.email,
+          otp,
+          registerDto.firstName,
+        );
+        this.logger.log(`Resent OTP email to ${registerDto.email}`);
+
+        // Update the existing pending registration with new OTP
+        this.pendingRegistrationService.storePendingRegistration(
+          registerDto.email,
+          registerDto,
+          otp,
+        );
+      } catch (error) {
+        this.logger.error(`Failed to resend OTP email: ${error.message}`);
+      }
+
+      return {
+        preAuthToken,
+        message:
+          'Registration initiated. Please check your email for the verification code.',
+        email: registerDto.email,
+      };
     }
 
-    // Generate auth response with tokens
-    return await this.generateAuthResponse(user);
+    // Store pending registration with OTP
+    this.pendingRegistrationService.storePendingRegistration(
+      registerDto.email,
+      registerDto,
+      otp,
+    );
+
+    // Send OTP email
+    try {
+      await this.emailService.sendOtpEmail(
+        registerDto.email,
+        otp,
+        registerDto.firstName,
+      );
+      this.logger.log(
+        `OTP email sent to ${registerDto.email} for registration`,
+      );
+    } catch (error) {
+      this.logger.error(`Failed to send OTP email: ${error.message}`);
+      // Remove pending registration if email fails
+      this.pendingRegistrationService.removePendingRegistration(
+        registerDto.email,
+      );
+      throw new Error('Failed to send verification email. Please try again.');
+    }
+
+    return {
+      preAuthToken,
+      message:
+        'Registration initiated. Please check your email for the verification code.',
+      email: registerDto.email,
+    };
   }
 
   async login(loginDto: LoginDto): Promise<{
@@ -249,5 +302,116 @@ export class AuthService {
       }
       throw new UnauthorizedException('Invalid refresh token');
     }
+  }
+
+  /**
+   * Generate a 6-digit OTP
+   */
+  private generateOtp(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  /**
+   * Generate preAuthToken (JWT containing email and expiration)
+   */
+  generatePreAuthToken(email: string): string {
+    const payload = {
+      email,
+      type: 'pre_auth_token',
+      purpose: 'email_verification',
+    };
+
+    return this.jwtService.sign(payload, {
+      expiresIn: '24h', // preAuthToken expires in 24 hours
+    });
+  }
+
+  /**
+   * Verify and decode preAuthToken
+   */
+  verifyPreAuthToken(token: string): { email: string } {
+    try {
+      const payload = this.jwtService.verify(token);
+
+      if (
+        payload.type !== 'pre_auth_token' ||
+        payload.purpose !== 'email_verification'
+      ) {
+        throw new UnauthorizedException('Invalid preAuthToken');
+      }
+
+      return { email: payload.email };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired preAuthToken');
+    }
+  }
+
+  /**
+   * Verify OTP and create user account
+   */
+  async verifyOtpAndCreateAccount(
+    preAuthToken: string,
+    otp: string,
+  ): Promise<{
+    user: Partial<UserEntity>;
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    // Verify preAuthToken
+    const { email } = this.verifyPreAuthToken(preAuthToken);
+
+    // Get pending registration
+    const pendingRegistration =
+      this.pendingRegistrationService.getPendingRegistration(email);
+
+    if (!pendingRegistration) {
+      throw new UnauthorizedException(
+        'No pending registration found for this email',
+      );
+    }
+
+    // Check if expired
+    if (this.pendingRegistrationService.isExpired(pendingRegistration)) {
+      this.pendingRegistrationService.removePendingRegistration(email);
+      throw new UnauthorizedException(
+        'Registration session expired. Please register again.',
+      );
+    }
+
+    // Verify OTP
+    if (pendingRegistration.otp !== otp) {
+      throw new UnauthorizedException('Invalid verification code');
+    }
+
+    // Check if user already exists (edge case)
+    const existingUser = await this.userRepository.findOne({
+      where: [
+        { email: pendingRegistration.registrationData.email },
+        { phone: pendingRegistration.registrationData.phone },
+      ],
+    });
+
+    if (existingUser) {
+      this.pendingRegistrationService.removePendingRegistration(email);
+      throw new ConflictException('User already exists');
+    }
+
+    // Create the user account
+    let user = this.userRepository.create({
+      ...pendingRegistration.registrationData,
+      isEmailVerified: true, // Mark as verified since they just verified
+    });
+
+    user = await this.userRepository.save(user);
+
+    // Remove from pending registrations
+    this.pendingRegistrationService.removePendingRegistration(email);
+
+    this.logger.log(
+      `User account created after OTP verification: ${user.email}`,
+    );
+
+    // Generate auth response with tokens
+    return await this.generateAuthResponse(user);
   }
 }

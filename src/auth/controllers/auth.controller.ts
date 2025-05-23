@@ -22,6 +22,11 @@ import { AuthResponseDto, TokenResponseDto } from '../dtos/auth-response.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { RegisterDto } from '../dtos/register.dto';
+import { PendingRegistrationResponseDto } from '../dtos/pending-registration.dto';
+import {
+  PreAuthRegistrationResponseDto,
+  VerifyOtpDto,
+} from '../dtos/preauth-registration.dto';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { AuthService } from '../services/auth.service';
 
@@ -32,15 +37,18 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Register a new user' })
   @ApiCreatedResponse({
-    description: 'User has been successfully registered',
-    type: AuthResponseDto,
+    description:
+      'Registration initiated. Please check email for verification code.',
+    type: PreAuthRegistrationResponseDto,
   })
   @ApiConflictResponse({
     description: 'User with this email or phone already exists',
   })
   @Public()
   @Post('register')
-  async register(@Body(ValidationPipe) registerDto: RegisterDto) {
+  async register(
+    @Body(ValidationPipe) registerDto: RegisterDto,
+  ): Promise<PreAuthRegistrationResponseDto> {
     return this.authService.register(registerDto);
   }
 
@@ -84,5 +92,23 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Body(ValidationPipe) refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshTokens(refreshTokenDto.refreshToken);
+  }
+
+  @ApiOperation({ summary: 'Verify OTP and complete registration' })
+  @ApiOkResponse({
+    description: 'OTP verified successfully and user account created',
+    type: AuthResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid OTP, preAuthToken, or expired registration session',
+  })
+  @Public()
+  @Post('verify-otp')
+  @HttpCode(HttpStatus.OK)
+  async verifyOtp(@Body(ValidationPipe) verifyOtpDto: VerifyOtpDto) {
+    return this.authService.verifyOtpAndCreateAccount(
+      verifyOtpDto.preAuthToken,
+      verifyOtpDto.otp,
+    );
   }
 }
