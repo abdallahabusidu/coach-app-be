@@ -1,4 +1,5 @@
 import { seedMeals } from './seed-meals';
+import { seedWorkouts } from './seed-workouts';
 
 async function runAllSeeds() {
   console.log('🌱 Starting database seeding...\n');
@@ -7,6 +8,10 @@ async function runAllSeeds() {
     // Run meal seeding
     console.log('🍽️  Running meal seeding...');
     await seedMeals();
+    
+    // Run workout seeding
+    console.log('\n🏋️  Running workout seeding...');
+    await seedWorkouts();
     
     console.log('\n✨ All seeding completed successfully!');
   } catch (error) {

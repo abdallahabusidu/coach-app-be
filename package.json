@@ -24,7 +24,8 @@
     "migration:run": "npm run build && npm run typeorm -- migration:run",
     "migration:revert": "npm run build && npm run typeorm -- migration:revert",
     "seed": "npx ts-node -r tsconfig-paths/register src/scripts/seed.ts",
-    "seed:meals": "npx ts-node -r tsconfig-paths/register src/scripts/seed-meals.ts"
+    "seed:meals": "npx ts-node -r tsconfig-paths/register src/scripts/seed-meals.ts",
+    "seed:workouts": "npx ts-node -r tsconfig-paths/register src/scripts/seed-workouts.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

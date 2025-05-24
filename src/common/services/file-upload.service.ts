@@ -16,6 +16,10 @@ export class FileUploadService {
     this.ensureDirectoryExists(path.join(this.uploadDir, 'profile-pictures'));
     this.ensureDirectoryExists(path.join(this.uploadDir, 'certificates'));
     this.ensureDirectoryExists(path.join(this.uploadDir, 'package-images'));
+    this.ensureDirectoryExists(path.join(this.uploadDir, 'workouts'));
+    this.ensureDirectoryExists(path.join(this.uploadDir, 'workouts', 'images'));
+    this.ensureDirectoryExists(path.join(this.uploadDir, 'workouts', 'videos'));
+    this.ensureDirectoryExists(path.join(this.uploadDir, 'workouts', 'pdfs'));
   }
 
   private ensureDirectoryExists(dir: string): void {
@@ -83,5 +87,52 @@ export class FileUploadService {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
+  }
+
+  /**
+   * Upload workout media files (images, videos, PDFs)
+   */
+  async uploadWorkoutMedia(file: Express.Multer.File, mediaType: 'image' | 'video' | 'pdf'): Promise<string> {
+    const filename = `${uuidv4()}_${file.originalname.replace(/\s+/g, '_')}`;
+    const subDir = mediaType === 'image' ? 'images' : mediaType === 'video' ? 'videos' : 'pdfs';
+    const filePath = path.join(this.uploadDir, 'workouts', subDir, filename);
+
+    return new Promise((resolve, reject) => {
+      fs.writeFile(filePath, file.buffer, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          // In a real production app, return a URL to the file
+          // For local development, we'll use a relative path
+          resolve(`/uploads/workouts/${subDir}/${filename}`);
+        }
+      });
+    });
+  }
+
+  /**
+   * Validate file type for workout media
+   */
+  validateWorkoutMediaFile(file: Express.Multer.File, mediaType: 'image' | 'video' | 'pdf'): boolean {
+    const allowedTypes = {
+      image: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
+      video: ['video/mp4', 'video/mov', 'video/avi', 'video/wmv', 'video/webm'],
+      pdf: ['application/pdf']
+    };
+
+    return allowedTypes[mediaType].includes(file.mimetype);
+  }
+
+  /**
+   * Get max file size for media type (in bytes)
+   */
+  getMaxFileSize(mediaType: 'image' | 'video' | 'pdf'): number {
+    const maxSizes = {
+      image: 5 * 1024 * 1024, // 5MB
+      video: 100 * 1024 * 1024, // 100MB
+      pdf: 10 * 1024 * 1024 // 10MB
+    };
+
+    return maxSizes[mediaType];
   }
 }

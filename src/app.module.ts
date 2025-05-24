@@ -14,6 +14,7 @@ import { FeatureModule } from './feature/feature.module';
 import { TargetAudienceModule } from './target-audience/target-audience.module';
 import { DiscountModule } from './discount/discount.module';
 import { MealModule } from './meal/meal.module';
+import { WorkoutModule } from './workout/workout.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { MealModule } from './meal/meal.module';
     TargetAudienceModule,
     DiscountModule,
     MealModule,
+    WorkoutModule,
   ],
   controllers: [AppController],
   providers: [
