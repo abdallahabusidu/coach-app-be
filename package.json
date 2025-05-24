@@ -18,13 +18,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "typeorm-ts-node-commonjs -d typeorm.config.ts",
+    "typeorm": "npx typeorm -d typeorm.config.ts",
     "migration:generate": "npm run typeorm -- migration:generate",
     "migration:create": "npm run typeorm -- migration:create",
     "migration:run": "npm run build && npm run typeorm -- migration:run",
     "migration:revert": "npm run build && npm run typeorm -- migration:revert",
-    "seed": "ts-node -r tsconfig-paths/register src/scripts/seed.ts",
-    "seed:meals": "ts-node -r tsconfig-paths/register src/scripts/seed-meals.ts"
+    "seed": "npx ts-node -r tsconfig-paths/register src/scripts/seed.ts",
+    "seed:meals": "npx ts-node -r tsconfig-paths/register src/scripts/seed-meals.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
