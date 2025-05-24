@@ -1,22 +1,22 @@
 import {
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
-  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../entities/user.entity';
-import {
-  VerifyEmailDto,
-  RequestEmailVerificationDto,
-} from '../dtos/verify-email.dto';
-import {
-  VerifyPhoneDto,
-  RequestPhoneVerificationDto,
-} from '../dtos/verify-phone.dto';
 import { EmailService } from '../../common/services/email.service';
 import { SmsService } from '../../common/services/sms.service';
+import {
+  RequestEmailVerificationDto,
+  VerifyEmailDto,
+} from '../dtos/verify-email.dto';
+import {
+  RequestPhoneVerificationDto,
+  VerifyPhoneDto,
+} from '../dtos/verify-phone.dto';
+import { UserEntity } from '../entities/user.entity';
 import { PendingRegistrationService } from './pending-registration.service';
 
 // Global function for random code generation

@@ -1,34 +1,34 @@
 import {
-  Controller,
-  Post,
-  Get,
-  Put,
-  Delete,
-  Body,
-  Param,
-  UseGuards,
   BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
   Patch,
+  Post,
+  Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ClientService } from '../services/client.service';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/entities/user.entity';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 import { CreateClientProfileDto } from '../dtos/create-client-profile.dto';
-import { UpdateClientProfileDto } from '../dtos/update-client-profile.dto';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { OnboardingStep1ProfileDto } from '../dtos/onboarding-step1-profile.dto';
 import { OnboardingStep2FitnessGoalsDto } from '../dtos/onboarding-step2-fitness-goals.dto';
 import { OnboardingStep3DietaryDto } from '../dtos/onboarding-step3-dietary.dto';
 import { OnboardingStep4HealthDto } from '../dtos/onboarding-step4-health.dto';
 import { OnboardingStep5PreferencesDto } from '../dtos/onboarding-step5-preferences.dto';
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { UpdateClientProfileDto } from '../dtos/update-client-profile.dto';
+import { ClientService } from '../services/client.service';
 
 @Controller('clients')
 export class ClientController {

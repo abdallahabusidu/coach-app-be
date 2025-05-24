@@ -1,15 +1,15 @@
+import { ApiProperty } from '@nestjs/swagger';
+import * as bcrypt from 'bcrypt';
+import { Exclude } from 'class-transformer';
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
-import * as bcrypt from 'bcrypt';
-import { ApiProperty } from '@nestjs/swagger';
 
 export enum UserRole {
   CLIENT = 'client',

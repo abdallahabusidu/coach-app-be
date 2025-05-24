@@ -1,21 +1,30 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
-  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { LoginDto } from '../dtos/login.dto';
-import { RegisterDto } from '../dtos/register.dto';
-import { UserEntity } from '../entities/user.entity';
-import { VerificationService } from './verification.service';
-import { PendingRegistrationService } from './pending-registration.service';
-import { PendingRegistrationResponseDto } from '../dtos/pending-registration.dto';
-import { PreAuthRegistrationResponseDto } from '../dtos/preauth-registration.dto';
 import { EmailService } from '../../common/services/email.service';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import { LoginDto } from '../dtos/login.dto';
+import {
+  ForgotPasswordResponseDto,
+  ResetPasswordResponseDto,
+  VerifyPasswordResetOtpResponseDto,
+} from '../dtos/password-reset-response.dto';
+import { PreAuthRegistrationResponseDto } from '../dtos/preauth-registration.dto';
+import { RegisterDto } from '../dtos/register.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { VerifyPasswordResetOtpDto } from '../dtos/verify-password-reset-otp.dto';
+import { UserEntity } from '../entities/user.entity';
+import { PasswordResetService } from './password-reset.service';
+import { PendingRegistrationService } from './pending-registration.service';
+import { VerificationService } from './verification.service';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +36,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly verificationService: VerificationService,
     private readonly pendingRegistrationService: PendingRegistrationService,
+    private readonly passwordResetService: PasswordResetService,
     private readonly emailService: EmailService,
   ) {}
 
@@ -411,7 +421,182 @@ export class AuthService {
       `User account created after OTP verification: ${user.email}`,
     );
 
+    // Send welcome email (async, don't wait for it)
+    this.sendWelcomeEmailAsync(user);
+
     // Generate auth response with tokens
     return await this.generateAuthResponse(user);
+  }
+
+  /**
+   * Send welcome email asynchronously after user registration
+   * This method doesn't block the registration response
+   */
+  private async sendWelcomeEmailAsync(user: UserEntity): Promise<void> {
+    try {
+      const userName =
+        `${user.firstName} ${user.lastName}`.trim() || user.firstName || 'User';
+      await this.emailService.sendWelcomeEmail(user.email, userName, user.role);
+      this.logger.log(`Welcome email sent to ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send welcome email to ${user.email}: ${error.message}`,
+      );
+      // Don't throw error since welcome email is not critical for registration flow
+    }
+  }
+
+  /**
+   * Initiate forgot password flow by sending OTP to email
+   */
+  async forgotPassword(
+    forgotPasswordDto: ForgotPasswordDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<ForgotPasswordResponseDto> {
+    const { email } = forgotPasswordDto;
+
+    // Check if user exists
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      // For security reasons, don't reveal if email exists or not
+      // Always return success to prevent email enumeration attacks
+      this.logger.warn(
+        `Forgot password attempt for non-existent email: ${email}`,
+      );
+      return {
+        message:
+          'If an account with this email exists, an OTP has been sent to your email address',
+        email,
+      };
+    }
+
+    // Generate 6-digit OTP
+    const otp = this.generateOtp();
+
+    // Store password reset OTP
+    this.passwordResetService.storePasswordResetOtp(
+      email,
+      otp,
+      ipAddress,
+      userAgent,
+    );
+
+    try {
+      // Send password reset email with OTP
+      await this.emailService.sendPasswordResetOtpEmail(
+        email,
+        otp,
+        user.firstName,
+        ipAddress,
+        userAgent,
+      );
+      this.logger.log(`Password reset OTP sent to ${email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send password reset OTP email: ${error.message}`,
+      );
+      // Don't expose email sending errors to client
+    }
+
+    return {
+      message:
+        'If an account with this email exists, an OTP has been sent to your email address',
+      email,
+    };
+  }
+
+  /**
+   * Verify OTP for password reset and return reset token
+   */
+  async verifyPasswordResetOtp(
+    verifyOtpDto: VerifyPasswordResetOtpDto,
+  ): Promise<VerifyPasswordResetOtpResponseDto> {
+    const { email, otp } = verifyOtpDto;
+
+    // Verify OTP
+    const isValidOtp = this.passwordResetService.verifyPasswordResetOtp(
+      email,
+      otp,
+    );
+
+    if (!isValidOtp) {
+      throw new BadRequestException('Invalid or expired OTP');
+    }
+
+    // Generate reset token (short-lived JWT)
+    const resetToken = this.jwtService.sign(
+      { email, type: 'password-reset' },
+      { expiresIn: '15m' }, // Reset token expires in 15 minutes
+    );
+
+    this.logger.log(`Password reset OTP verified for email: ${email}`);
+
+    return {
+      message: 'OTP verified successfully',
+      resetToken,
+    };
+  }
+
+  /**
+   * Reset password using verified reset token
+   */
+  async resetPassword(
+    resetPasswordDto: ResetPasswordDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<ResetPasswordResponseDto> {
+    const { email, resetToken, newPassword } = resetPasswordDto;
+
+    try {
+      // Verify reset token
+      const decoded = this.jwtService.verify(resetToken);
+
+      if (decoded.email !== email || decoded.type !== 'password-reset') {
+        throw new BadRequestException('Invalid reset token');
+      }
+    } catch (error) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    // Find user
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Update password
+    user.password = newPassword; // This will be hashed by the entity's beforeInsert/beforeUpdate hook
+    await this.userRepository.save(user);
+
+    // Clean up password reset data
+    this.passwordResetService.removePasswordResetOtp(email);
+
+    this.logger.log(`Password reset successfully for user: ${email}`);
+
+    // Send password change confirmation email
+    try {
+      await this.emailService.sendPasswordResetConfirmationEmail(
+        email,
+        user.firstName,
+        ipAddress,
+        userAgent,
+      );
+      this.logger.log(`Password reset confirmation email sent to ${email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send password reset confirmation email: ${error.message}`,
+      );
+    }
+
+    return {
+      message: 'Password reset successfully',
+    };
   }
 }

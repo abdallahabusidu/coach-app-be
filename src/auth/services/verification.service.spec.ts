@@ -1,15 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { VerificationService } from './verification.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { UserEntity } from '../entities/user.entity';
-import { EmailService } from '../../common/services/email.service';
-import { SmsService } from '../../common/services/sms.service';
 import {
+  Logger,
   NotFoundException,
   UnauthorizedException,
-  Logger,
 } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { EmailService } from '../../common/services/email.service';
+import { SmsService } from '../../common/services/sms.service';
 import {
   RequestEmailVerificationDto,
   VerifyEmailDto,
@@ -18,6 +16,8 @@ import {
   RequestPhoneVerificationDto,
   VerifyPhoneDto,
 } from '../dtos/verify-phone.dto';
+import { UserEntity } from '../entities/user.entity';
+import { VerificationService } from './verification.service';
 
 // Mock UserEntity
 const mockUserEntity = {

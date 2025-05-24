@@ -1,30 +1,30 @@
 import {
-  Controller,
-  Post,
   Body,
-  UseGuards,
+  Controller,
   Get,
   HttpCode,
   HttpStatus,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
-import { VerificationService } from '../services/verification.service';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { Public } from '../decorators/public.decorator';
 import {
-  VerifyEmailDto,
-  RequestEmailVerificationDto,
-} from '../dtos/verify-email.dto';
-import {
-  VerifyPhoneDto,
-  RequestPhoneVerificationDto,
-} from '../dtos/verify-phone.dto';
-import {
+  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { Public } from '../decorators/public.decorator';
+import {
+  RequestEmailVerificationDto,
+  VerifyEmailDto,
+} from '../dtos/verify-email.dto';
+import {
+  RequestPhoneVerificationDto,
+  VerifyPhoneDto,
+} from '../dtos/verify-phone.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { VerificationService } from '../services/verification.service';
 
 @ApiTags('verification')
 @Controller('verification')

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsEnum,
@@ -8,7 +9,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { UserRole } from '../entities/user.entity';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
   @ApiProperty({

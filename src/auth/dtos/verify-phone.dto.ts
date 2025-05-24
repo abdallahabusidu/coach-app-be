@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsString, IsPhoneNumber, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsPhoneNumber, IsString, Length } from 'class-validator';
 
 export class VerifyPhoneDto {
   @ApiProperty({

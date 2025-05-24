@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { UserEntity } from './entities/user.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommonModule } from '../common/common.module';
 import { AuthController } from './controllers/auth.controller';
 import { VerificationController } from './controllers/verification.controller';
-import { AuthService } from './services/auth.service';
-import { VerificationService } from './services/verification.service';
-import { PendingRegistrationService } from './services/pending-registration.service';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { UserEntity } from './entities/user.entity';
 import { RolesGuard } from './guards/roles.guard';
+import { AuthService } from './services/auth.service';
+import { PasswordResetService } from './services/password-reset.service';
+import { PendingRegistrationService } from './services/pending-registration.service';
+import { VerificationService } from './services/verification.service';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { CommonModule } from '../common/common.module';
     AuthService,
     VerificationService,
     PendingRegistrationService,
+    PasswordResetService,
     JwtStrategy,
     LocalStrategy,
     RolesGuard,

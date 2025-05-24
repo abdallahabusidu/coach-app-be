@@ -19,14 +19,21 @@ import {
 } from '@nestjs/swagger';
 import { Public } from '../decorators/public.decorator';
 import { AuthResponseDto, TokenResponseDto } from '../dtos/auth-response.dto';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { LoginDto } from '../dtos/login.dto';
-import { RefreshTokenDto } from '../dtos/refresh-token.dto';
-import { RegisterDto } from '../dtos/register.dto';
-import { PendingRegistrationResponseDto } from '../dtos/pending-registration.dto';
+import {
+  ForgotPasswordResponseDto,
+  ResetPasswordResponseDto,
+  VerifyPasswordResetOtpResponseDto,
+} from '../dtos/password-reset-response.dto';
 import {
   PreAuthRegistrationResponseDto,
   VerifyOtpDto,
 } from '../dtos/preauth-registration.dto';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import { RegisterDto } from '../dtos/register.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { VerifyPasswordResetOtpDto } from '../dtos/verify-password-reset-otp.dto';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { AuthService } from '../services/auth.service';
 
@@ -109,6 +116,64 @@ export class AuthController {
     return this.authService.verifyOtpAndCreateAccount(
       verifyOtpDto.preAuthToken,
       verifyOtpDto.otp,
+    );
+  }
+
+  @ApiOperation({ summary: 'Initiate forgot password flow' })
+  @ApiOkResponse({
+    description: 'OTP sent to email if account exists',
+    type: ForgotPasswordResponseDto,
+  })
+  @Public()
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(
+    @Body(ValidationPipe) forgotPasswordDto: ForgotPasswordDto,
+    @Request() req,
+  ): Promise<ForgotPasswordResponseDto> {
+    const ipAddress = req.ip || req.connection?.remoteAddress;
+    const userAgent = req.get('User-Agent');
+    return this.authService.forgotPassword(
+      forgotPasswordDto,
+      ipAddress,
+      userAgent,
+    );
+  }
+
+  @ApiOperation({ summary: 'Verify OTP for password reset' })
+  @ApiOkResponse({
+    description: 'OTP verified successfully, reset token provided',
+    type: VerifyPasswordResetOtpResponseDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Invalid or expired OTP' })
+  @Public()
+  @Post('verify-password-reset-otp')
+  @HttpCode(HttpStatus.OK)
+  async verifyPasswordResetOtp(
+    @Body(ValidationPipe) verifyOtpDto: VerifyPasswordResetOtpDto,
+  ): Promise<VerifyPasswordResetOtpResponseDto> {
+    return this.authService.verifyPasswordResetOtp(verifyOtpDto);
+  }
+
+  @ApiOperation({ summary: 'Reset password with verified token' })
+  @ApiOkResponse({
+    description: 'Password reset successfully',
+    type: ResetPasswordResponseDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Invalid or expired reset token' })
+  @Public()
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(
+    @Body(ValidationPipe) resetPasswordDto: ResetPasswordDto,
+    @Request() req,
+  ): Promise<ResetPasswordResponseDto> {
+    const ipAddress = req.ip || req.connection?.remoteAddress;
+    const userAgent = req.get('User-Agent');
+    return this.authService.resetPassword(
+      resetPasswordDto,
+      ipAddress,
+      userAgent,
     );
   }
 }
