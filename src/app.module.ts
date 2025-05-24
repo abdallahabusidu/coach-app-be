@@ -13,6 +13,7 @@ import { JwtAuthGuardGlobal } from './auth/guards/jwt-auth-global.guard';
 import { FeatureModule } from './feature/feature.module';
 import { TargetAudienceModule } from './target-audience/target-audience.module';
 import { DiscountModule } from './discount/discount.module';
+import { MealModule } from './meal/meal.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DiscountModule } from './discount/discount.module';
     FeatureModule,
     TargetAudienceModule,
     DiscountModule,
+    MealModule,
   ],
   controllers: [AppController],
   providers: [
