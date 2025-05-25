@@ -12,11 +12,11 @@ import {
 import { WorkoutType, DifficultyLevel } from '../entities/workout.entity';
 
 export class WorkoutQueryDto {
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Page number for pagination',
     required: false,
     default: 1,
-    minimum: 1
+    minimum: 1,
   })
   @IsOptional()
   @Type(() => Number)
@@ -24,12 +24,12 @@ export class WorkoutQueryDto {
   @Min(1)
   page?: number = 1;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Number of items per page',
     required: false,
     default: 10,
     minimum: 1,
-    maximum: 100
+    maximum: 100,
   })
   @IsOptional()
   @Type(() => Number)
@@ -38,28 +38,28 @@ export class WorkoutQueryDto {
   @Max(100)
   limit?: number = 10;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Filter by workout type',
     enum: WorkoutType,
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsEnum(WorkoutType)
   workoutType?: WorkoutType;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Filter by difficulty level',
     enum: DifficultyLevel,
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsEnum(DifficultyLevel)
   difficulty?: DifficultyLevel;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Minimum duration in minutes',
     required: false,
-    minimum: 5
+    minimum: 5,
   })
   @IsOptional()
   @Type(() => Number)
@@ -67,10 +67,10 @@ export class WorkoutQueryDto {
   @Min(5)
   minDuration?: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Maximum duration in minutes',
     required: false,
-    maximum: 300
+    maximum: 300,
   })
   @IsOptional()
   @Type(() => Number)
@@ -78,10 +78,10 @@ export class WorkoutQueryDto {
   @Max(300)
   maxDuration?: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Minimum calories burned',
     required: false,
-    minimum: 1
+    minimum: 1,
   })
   @IsOptional()
   @Type(() => Number)
@@ -89,10 +89,10 @@ export class WorkoutQueryDto {
   @Min(1)
   minCalories?: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Maximum calories burned',
     required: false,
-    maximum: 2000
+    maximum: 2000,
   })
   @IsOptional()
   @Type(() => Number)
@@ -100,47 +100,47 @@ export class WorkoutQueryDto {
   @Max(2000)
   maxCalories?: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Search in workout name and description',
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsString()
   search?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Filter by equipment needed',
     required: false,
-    example: 'Dumbbells'
+    example: 'Dumbbells',
   })
   @IsOptional()
   @IsString()
   equipment?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Filter by target muscle group',
     required: false,
-    example: 'Chest'
+    example: 'Chest',
   })
   @IsOptional()
   @IsString()
   targetMuscleGroup?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Field to sort by',
     required: false,
     default: 'createdAt',
-    enum: ['name', 'duration', 'difficulty', 'caloriesBurned', 'createdAt']
+    enum: ['name', 'duration', 'difficulty', 'caloriesBurned', 'createdAt'],
   })
   @IsOptional()
   @IsIn(['name', 'duration', 'difficulty', 'caloriesBurned', 'createdAt'])
   sortBy?: string = 'createdAt';
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Sort order',
     required: false,
     default: 'DESC',
-    enum: ['ASC', 'DESC']
+    enum: ['ASC', 'DESC'],
   })
   @IsOptional()
   @IsIn(['ASC', 'DESC'])

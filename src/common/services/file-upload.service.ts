@@ -92,9 +92,17 @@ export class FileUploadService {
   /**
    * Upload workout media files (images, videos, PDFs)
    */
-  async uploadWorkoutMedia(file: Express.Multer.File, mediaType: 'image' | 'video' | 'pdf'): Promise<string> {
+  async uploadWorkoutMedia(
+    file: Express.Multer.File,
+    mediaType: 'image' | 'video' | 'pdf',
+  ): Promise<string> {
     const filename = `${uuidv4()}_${file.originalname.replace(/\s+/g, '_')}`;
-    const subDir = mediaType === 'image' ? 'images' : mediaType === 'video' ? 'videos' : 'pdfs';
+    const subDir =
+      mediaType === 'image'
+        ? 'images'
+        : mediaType === 'video'
+          ? 'videos'
+          : 'pdfs';
     const filePath = path.join(this.uploadDir, 'workouts', subDir, filename);
 
     return new Promise((resolve, reject) => {
@@ -113,11 +121,20 @@ export class FileUploadService {
   /**
    * Validate file type for workout media
    */
-  validateWorkoutMediaFile(file: Express.Multer.File, mediaType: 'image' | 'video' | 'pdf'): boolean {
+  validateWorkoutMediaFile(
+    file: Express.Multer.File,
+    mediaType: 'image' | 'video' | 'pdf',
+  ): boolean {
     const allowedTypes = {
-      image: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
+      image: [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+      ],
       video: ['video/mp4', 'video/mov', 'video/avi', 'video/wmv', 'video/webm'],
-      pdf: ['application/pdf']
+      pdf: ['application/pdf'],
     };
 
     return allowedTypes[mediaType].includes(file.mimetype);
@@ -130,7 +147,7 @@ export class FileUploadService {
     const maxSizes = {
       image: 5 * 1024 * 1024, // 5MB
       video: 100 * 1024 * 1024, // 100MB
-      pdf: 10 * 1024 * 1024 // 10MB
+      pdf: 10 * 1024 * 1024, // 10MB
     };
 
     return maxSizes[mediaType];

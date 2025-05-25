@@ -41,7 +41,7 @@ export class WorkoutEntity {
   @Column('text', { nullable: true })
   description?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'List of exercises in the workout',
     type: 'array',
     items: {
@@ -51,9 +51,9 @@ export class WorkoutEntity {
         sets: { type: 'number' },
         reps: { type: 'number' },
         restTime: { type: 'number' },
-        notes: { type: 'string' }
-      }
-    }
+        notes: { type: 'string' },
+      },
+    },
   })
   @Column('jsonb')
   exercises: {
@@ -64,10 +64,10 @@ export class WorkoutEntity {
     notes?: string;
   }[];
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Type of workout',
     enum: WorkoutType,
-    example: WorkoutType.STRENGTH
+    example: WorkoutType.STRENGTH,
   })
   @Column({
     type: 'enum',
@@ -81,10 +81,10 @@ export class WorkoutEntity {
   @Index()
   duration: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Difficulty level of the workout',
     enum: DifficultyLevel,
-    example: DifficultyLevel.INTERMEDIATE
+    example: DifficultyLevel.INTERMEDIATE,
   })
   @Column({
     type: 'enum',
@@ -93,21 +93,21 @@ export class WorkoutEntity {
   @Index()
   difficulty: DifficultyLevel;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Media files associated with the workout',
     type: 'array',
     items: {
       type: 'object',
       properties: {
-        type: { 
+        type: {
           type: 'string',
-          enum: ['image', 'video', 'pdf']
+          enum: ['image', 'video', 'pdf'],
         },
         url: { type: 'string' },
         title: { type: 'string' },
-        description: { type: 'string' }
-      }
-    }
+        description: { type: 'string' },
+      },
+    },
   })
   @Column('jsonb', { default: [] })
   media: {

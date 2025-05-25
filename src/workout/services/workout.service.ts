@@ -7,7 +7,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere, ILike, Between } from 'typeorm';
-import { WorkoutEntity, WorkoutType, DifficultyLevel } from '../entities/workout.entity';
+import {
+  WorkoutEntity,
+  WorkoutType,
+  DifficultyLevel,
+} from '../entities/workout.entity';
 import { CreateWorkoutDto } from '../dtos/create-workout.dto';
 import { UpdateWorkoutDto } from '../dtos/update-workout.dto';
 import { WorkoutQueryDto } from '../dtos/workout-query.dto';
@@ -33,7 +37,9 @@ export class WorkoutService {
       });
 
       if (existingWorkout) {
-        throw new ConflictException(`Workout with name "${createWorkoutDto.name}" already exists`);
+        throw new ConflictException(
+          `Workout with name "${createWorkoutDto.name}" already exists`,
+        );
       }
 
       // Validate exercises data
@@ -47,11 +53,16 @@ export class WorkoutService {
       });
 
       const savedWorkout = await this.workoutRepository.save(workout);
-      
-      this.logger.log(`Created new workout: ${savedWorkout.name} (ID: ${savedWorkout.id})`);
+
+      this.logger.log(
+        `Created new workout: ${savedWorkout.name} (ID: ${savedWorkout.id})`,
+      );
       return savedWorkout;
     } catch (error) {
-      this.logger.error(`Failed to create workout: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to create workout: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -68,7 +79,7 @@ export class WorkoutService {
   }> {
     try {
       const { page, limit, sortBy, sortOrder, ...filters } = queryDto;
-      
+
       const skip = (page - 1) * limit;
       const whereClause = this.buildWhereClause(filters);
 
@@ -81,7 +92,9 @@ export class WorkoutService {
 
       const totalPages = Math.ceil(total / limit);
 
-      this.logger.log(`Retrieved ${workouts.length} workouts (page ${page}/${totalPages})`);
+      this.logger.log(
+        `Retrieved ${workouts.length} workouts (page ${page}/${totalPages})`,
+      );
 
       return {
         workouts,
@@ -91,7 +104,10 @@ export class WorkoutService {
         totalPages,
       };
     } catch (error) {
-      this.logger.error(`Failed to retrieve workouts: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to retrieve workouts: ${error.message}`,
+        error.stack,
+      );
       throw new BadRequestException('Failed to retrieve workouts');
     }
   }
@@ -115,7 +131,10 @@ export class WorkoutService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      this.logger.error(`Failed to retrieve workout ${id}: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to retrieve workout ${id}: ${error.message}`,
+        error.stack,
+      );
       throw new BadRequestException('Failed to retrieve workout');
     }
   }
@@ -123,7 +142,10 @@ export class WorkoutService {
   /**
    * Update an existing workout
    */
-  async update(id: string, updateWorkoutDto: UpdateWorkoutDto): Promise<WorkoutEntity> {
+  async update(
+    id: string,
+    updateWorkoutDto: UpdateWorkoutDto,
+  ): Promise<WorkoutEntity> {
     try {
       const workout = await this.findOne(id);
 
@@ -134,7 +156,9 @@ export class WorkoutService {
         });
 
         if (existingWorkout) {
-          throw new ConflictException(`Workout with name "${updateWorkoutDto.name}" already exists`);
+          throw new ConflictException(
+            `Workout with name "${updateWorkoutDto.name}" already exists`,
+          );
         }
       }
 
@@ -144,16 +168,25 @@ export class WorkoutService {
       }
 
       // Merge the updates
-      const updatedWorkout = this.workoutRepository.merge(workout, updateWorkoutDto);
+      const updatedWorkout = this.workoutRepository.merge(
+        workout,
+        updateWorkoutDto,
+      );
       const savedWorkout = await this.workoutRepository.save(updatedWorkout);
 
       this.logger.log(`Updated workout: ${savedWorkout.name} (ID: ${id})`);
       return savedWorkout;
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ConflictException) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ConflictException
+      ) {
         throw error;
       }
-      this.logger.error(`Failed to update workout ${id}: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to update workout ${id}: ${error.message}`,
+        error.stack,
+      );
       throw new BadRequestException('Failed to update workout');
     }
   }
@@ -165,13 +198,16 @@ export class WorkoutService {
     try {
       const workout = await this.findOne(id);
       await this.workoutRepository.remove(workout);
-      
+
       this.logger.log(`Deleted workout: ${workout.name} (ID: ${id})`);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      this.logger.error(`Failed to delete workout ${id}: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to delete workout ${id}: ${error.message}`,
+        error.stack,
+      );
       throw new BadRequestException('Failed to delete workout');
     }
   }
@@ -182,7 +218,7 @@ export class WorkoutService {
   async getStatistics(): Promise<WorkoutStatsResponseDto> {
     try {
       const totalWorkouts = await this.workoutRepository.count();
-      
+
       if (totalWorkouts === 0) {
         return {
           totalWorkouts: 0,
@@ -243,17 +279,20 @@ export class WorkoutService {
         return acc;
       }, {});
 
-      const workoutsByDifficulty = difficultyDistribution.reduce((acc, item) => {
-        acc[item.difficulty] = parseInt(item.count);
-        return acc;
-      }, {});
+      const workoutsByDifficulty = difficultyDistribution.reduce(
+        (acc, item) => {
+          acc[item.difficulty] = parseInt(item.count);
+          return acc;
+        },
+        {},
+      );
 
-      const popularEquipment = equipmentStats.map(item => ({
+      const popularEquipment = equipmentStats.map((item) => ({
         equipment: item.equipment,
         count: parseInt(item.count),
       }));
 
-      const popularMuscleGroups = muscleGroupStats.map(item => ({
+      const popularMuscleGroups = muscleGroupStats.map((item) => ({
         muscleGroup: item.muscleGroup,
         count: parseInt(item.count),
       }));
@@ -270,7 +309,10 @@ export class WorkoutService {
         popularMuscleGroups,
       };
     } catch (error) {
-      this.logger.error(`Failed to generate statistics: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to generate statistics: ${error.message}`,
+        error.stack,
+      );
       throw new BadRequestException('Failed to generate workout statistics');
     }
   }
@@ -285,10 +327,15 @@ export class WorkoutService {
         order: { createdAt: 'DESC' },
       });
 
-      this.logger.log(`Retrieved ${workouts.length} workouts of type: ${workoutType}`);
+      this.logger.log(
+        `Retrieved ${workouts.length} workouts of type: ${workoutType}`,
+      );
       return workouts;
     } catch (error) {
-      this.logger.error(`Failed to retrieve workouts by type: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to retrieve workouts by type: ${error.message}`,
+        error.stack,
+      );
       throw new BadRequestException('Failed to retrieve workouts by type');
     }
   }
@@ -296,25 +343,36 @@ export class WorkoutService {
   /**
    * Get workouts by difficulty
    */
-  async findByDifficulty(difficulty: DifficultyLevel): Promise<WorkoutEntity[]> {
+  async findByDifficulty(
+    difficulty: DifficultyLevel,
+  ): Promise<WorkoutEntity[]> {
     try {
       const workouts = await this.workoutRepository.find({
         where: { difficulty },
         order: { createdAt: 'DESC' },
       });
 
-      this.logger.log(`Retrieved ${workouts.length} workouts of difficulty: ${difficulty}`);
+      this.logger.log(
+        `Retrieved ${workouts.length} workouts of difficulty: ${difficulty}`,
+      );
       return workouts;
     } catch (error) {
-      this.logger.error(`Failed to retrieve workouts by difficulty: ${error.message}`, error.stack);
-      throw new BadRequestException('Failed to retrieve workouts by difficulty');
+      this.logger.error(
+        `Failed to retrieve workouts by difficulty: ${error.message}`,
+        error.stack,
+      );
+      throw new BadRequestException(
+        'Failed to retrieve workouts by difficulty',
+      );
     }
   }
 
   /**
    * Build where clause for filtering
    */
-  private buildWhereClause(filters: Partial<WorkoutQueryDto>): FindOptionsWhere<WorkoutEntity> {
+  private buildWhereClause(
+    filters: Partial<WorkoutQueryDto>,
+  ): FindOptionsWhere<WorkoutEntity> {
     const where: FindOptionsWhere<WorkoutEntity> = {};
 
     if (filters.workoutType) {
@@ -325,17 +383,23 @@ export class WorkoutService {
       where.difficulty = filters.difficulty;
     }
 
-    if (filters.minDuration !== undefined || filters.maxDuration !== undefined) {
+    if (
+      filters.minDuration !== undefined ||
+      filters.maxDuration !== undefined
+    ) {
       where.duration = Between(
         filters.minDuration || 0,
-        filters.maxDuration || 999999
+        filters.maxDuration || 999999,
       );
     }
 
-    if (filters.minCalories !== undefined || filters.maxCalories !== undefined) {
+    if (
+      filters.minCalories !== undefined ||
+      filters.maxCalories !== undefined
+    ) {
       where.caloriesBurned = Between(
         filters.minCalories || 0,
-        filters.maxCalories || 999999
+        filters.maxCalories || 999999,
       );
     }
 
@@ -357,7 +421,9 @@ export class WorkoutService {
 
     for (const exercise of exercises) {
       if (!exercise.name || !exercise.sets || !exercise.reps) {
-        throw new BadRequestException('Each exercise must have name, sets, and reps');
+        throw new BadRequestException(
+          'Each exercise must have name, sets, and reps',
+        );
       }
 
       if (exercise.sets < 1 || exercise.sets > 20) {
@@ -368,8 +434,13 @@ export class WorkoutService {
         throw new BadRequestException('Reps must be between 1 and 200');
       }
 
-      if (exercise.restTime !== undefined && (exercise.restTime < 0 || exercise.restTime > 600)) {
-        throw new BadRequestException('Rest time must be between 0 and 600 seconds');
+      if (
+        exercise.restTime !== undefined &&
+        (exercise.restTime < 0 || exercise.restTime > 600)
+      ) {
+        throw new BadRequestException(
+          'Rest time must be between 0 and 600 seconds',
+        );
       }
     }
   }

@@ -52,9 +52,9 @@ export class WorkoutController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(UserRole.COACH)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create a new workout (Coach only)',
-    description: 'Create a new workout with exercises and optional media files'
+    description: 'Create a new workout with exercises and optional media files',
   })
   @ApiResponse({
     status: 201,
@@ -63,21 +63,23 @@ export class WorkoutController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request - validation failed'
+    description: 'Bad request - validation failed',
   })
   @ApiResponse({
     status: 401,
-    description: 'Unauthorized - authentication required'
+    description: 'Unauthorized - authentication required',
   })
   @ApiResponse({
     status: 403,
-    description: 'Forbidden - coach role required'
+    description: 'Forbidden - coach role required',
   })
   @ApiResponse({
     status: 409,
-    description: 'Conflict - workout with same name already exists'
+    description: 'Conflict - workout with same name already exists',
   })
-  async create(@Body() createWorkoutDto: CreateWorkoutDto): Promise<WorkoutResponseDto> {
+  async create(
+    @Body() createWorkoutDto: CreateWorkoutDto,
+  ): Promise<WorkoutResponseDto> {
     const workout = await this.workoutService.create(createWorkoutDto);
     return { workout };
   }
@@ -88,7 +90,7 @@ export class WorkoutController {
   @UseInterceptors(FilesInterceptor('files', 10))
   @ApiOperation({
     summary: 'Upload media files for a workout (Coach only)',
-    description: 'Upload images, videos, or PDF files for a specific workout'
+    description: 'Upload images, videos, or PDF files for a specific workout',
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -99,15 +101,15 @@ export class WorkoutController {
         files: {
           type: 'array',
           items: { type: 'string', format: 'binary' },
-          description: 'Media files to upload'
+          description: 'Media files to upload',
         },
         mediaInfo: {
           type: 'string',
-          description: 'JSON string containing media information'
-        }
+          description: 'JSON string containing media information',
+        },
       },
-      required: ['files', 'mediaInfo']
-    }
+      required: ['files', 'mediaInfo'],
+    },
   })
   @ApiResponse({
     status: 200,
@@ -116,11 +118,11 @@ export class WorkoutController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request - invalid files or media info'
+    description: 'Bad request - invalid files or media info',
   })
   @ApiResponse({
     status: 404,
-    description: 'Workout not found'
+    description: 'Workout not found',
   })
   async uploadMedia(
     @Param('id', ParseUUIDPipe) id: string,
@@ -139,7 +141,9 @@ export class WorkoutController {
     }
 
     if (!Array.isArray(mediaInfo) || mediaInfo.length !== files.length) {
-      throw new BadRequestException('Media info must match the number of files');
+      throw new BadRequestException(
+        'Media info must match the number of files',
+      );
     }
 
     // Validate and upload each file
@@ -155,41 +159,49 @@ export class WorkoutController {
       // Validate file type
       const mediaType = info.type as 'image' | 'video' | 'pdf';
       if (!this.fileUploadService.validateWorkoutMediaFile(file, mediaType)) {
-        throw new BadRequestException(`Invalid file type for ${mediaType}: ${file.mimetype}`);
+        throw new BadRequestException(
+          `Invalid file type for ${mediaType}: ${file.mimetype}`,
+        );
       }
 
       // Check file size
       const maxSize = this.fileUploadService.getMaxFileSize(mediaType);
       if (file.size > maxSize) {
-        throw new BadRequestException(`File size exceeds limit for ${mediaType}`);
+        throw new BadRequestException(
+          `File size exceeds limit for ${mediaType}`,
+        );
       }
 
       // Upload file
-      const fileUrl = await this.fileUploadService.uploadWorkoutMedia(file, mediaType);
-      
+      const fileUrl = await this.fileUploadService.uploadWorkoutMedia(
+        file,
+        mediaType,
+      );
+
       uploadedMedia.push({
         type: info.type,
         url: fileUrl,
         title: info.title || file.originalname,
-        description: info.description || ''
+        description: info.description || '',
       });
     }
 
     // Get current workout and update with new media
     const workout = await this.workoutService.findOne(id);
     const existingMedia = workout.media || [];
-    
+
     const updatedWorkout = await this.workoutService.update(id, {
-      media: [...existingMedia, ...uploadedMedia]
+      media: [...existingMedia, ...uploadedMedia],
     });
 
     return { workout: updatedWorkout };
   }
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get all workouts with filtering and pagination',
-    description: 'Retrieve workouts with optional filtering by type, difficulty, duration, etc.'
+    description:
+      'Retrieve workouts with optional filtering by type, difficulty, duration, etc.',
   })
   @ApiQuery({ type: WorkoutQueryDto })
   @ApiResponse({
@@ -197,14 +209,17 @@ export class WorkoutController {
     description: 'Workouts retrieved successfully',
     type: WorkoutListResponseDto,
   })
-  async findAll(@Query() queryDto: WorkoutQueryDto): Promise<WorkoutListResponseDto> {
+  async findAll(
+    @Query() queryDto: WorkoutQueryDto,
+  ): Promise<WorkoutListResponseDto> {
     return await this.workoutService.findAll(queryDto);
   }
 
   @Get('statistics')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get workout statistics',
-    description: 'Get comprehensive statistics about all workouts in the system'
+    description:
+      'Get comprehensive statistics about all workouts in the system',
   })
   @ApiResponse({
     status: 200,
@@ -216,9 +231,9 @@ export class WorkoutController {
   }
 
   @Get(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get a specific workout',
-    description: 'Retrieve detailed information about a specific workout'
+    description: 'Retrieve detailed information about a specific workout',
   })
   @ApiResponse({
     status: 200,
@@ -227,9 +242,11 @@ export class WorkoutController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Workout not found'
+    description: 'Workout not found',
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<WorkoutResponseDto> {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<WorkoutResponseDto> {
     const workout = await this.workoutService.findOne(id);
     return { workout };
   }
@@ -237,9 +254,9 @@ export class WorkoutController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRole.COACH)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update a workout (Coach only)',
-    description: 'Update an existing workout with new information'
+    description: 'Update an existing workout with new information',
   })
   @ApiResponse({
     status: 200,
@@ -248,19 +265,19 @@ export class WorkoutController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request - validation failed'
+    description: 'Bad request - validation failed',
   })
   @ApiResponse({
     status: 404,
-    description: 'Workout not found'
+    description: 'Workout not found',
   })
   @ApiResponse({
     status: 409,
-    description: 'Conflict - workout with same name already exists'
+    description: 'Conflict - workout with same name already exists',
   })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateWorkoutDto: UpdateWorkoutDto
+    @Body() updateWorkoutDto: UpdateWorkoutDto,
   ): Promise<WorkoutResponseDto> {
     const workout = await this.workoutService.update(id, updateWorkoutDto);
     return { workout };
@@ -269,9 +286,9 @@ export class WorkoutController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRole.COACH)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Delete a workout (Coach only)',
-    description: 'Delete a workout and all associated media files'
+    description: 'Delete a workout and all associated media files',
   })
   @ApiResponse({
     status: 200,
@@ -279,18 +296,20 @@ export class WorkoutController {
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Workout deleted successfully' }
-      }
-    }
+        message: { type: 'string', example: 'Workout deleted successfully' },
+      },
+    },
   })
   @ApiResponse({
     status: 404,
-    description: 'Workout not found'
+    description: 'Workout not found',
   })
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<{ message: string }> {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<{ message: string }> {
     // Get workout to delete associated media files
     const workout = await this.workoutService.findOne(id);
-    
+
     // Delete associated media files
     if (workout.media && workout.media.length > 0) {
       for (const media of workout.media) {
@@ -312,7 +331,7 @@ export class WorkoutController {
   @Roles(UserRole.COACH)
   @ApiOperation({
     summary: 'Delete a specific media file from workout (Coach only)',
-    description: 'Remove a specific media file from a workout'
+    description: 'Remove a specific media file from a workout',
   })
   @ApiResponse({
     status: 200,
@@ -321,11 +340,11 @@ export class WorkoutController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Workout or media not found'
+    description: 'Workout or media not found',
   })
   async removeMedia(
     @Param('id', ParseUUIDPipe) id: string,
-    @Param('mediaIndex') mediaIndex: string
+    @Param('mediaIndex') mediaIndex: string,
   ): Promise<WorkoutResponseDto> {
     const workout = await this.workoutService.findOne(id);
     const index = parseInt(mediaIndex);
@@ -344,7 +363,9 @@ export class WorkoutController {
 
     // Remove from media array
     const updatedMedia = workout.media.filter((_, i) => i !== index);
-    const updatedWorkout = await this.workoutService.update(id, { media: updatedMedia });
+    const updatedWorkout = await this.workoutService.update(id, {
+      media: updatedMedia,
+    });
 
     return { workout: updatedWorkout };
   }

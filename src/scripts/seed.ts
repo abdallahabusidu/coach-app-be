@@ -8,11 +8,11 @@ async function runAllSeeds() {
     // Run meal seeding
     console.log('🍽️  Running meal seeding...');
     await seedMeals();
-    
+
     // Run workout seeding
     console.log('\n🏋️  Running workout seeding...');
     await seedWorkouts();
-    
+
     console.log('\n✨ All seeding completed successfully!');
   } catch (error) {
     console.error('💥 Seeding failed:', error);
