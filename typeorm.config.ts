@@ -1,17 +1,23 @@
 // typeorm.config.ts
-import { DataSource } from 'typeorm';
-import * as dotenv from 'dotenv';
+const { DataSource } = require('typeorm');
+const dotenv = require('dotenv');
 
-dotenv.config();
+// Load environment variables based on NODE_ENV
+const envFile = process.env.NODE_ENV === 'production' 
+  ? '.env.production' 
+  : '.env.development';
 
-export default new DataSource({
+dotenv.config({ path: envFile });
+
+module.exports = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST,
+  host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  username: process.env.DB_USERNAME || 'postgres',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'coach-app-db',
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/database/migrations/*.js'],
   synchronize: false,
+  logging: process.env.DB_LOGGING === 'true',
 });
