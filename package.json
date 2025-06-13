@@ -26,7 +26,8 @@
     "seed": "npx ts-node -r tsconfig-paths/register src/scripts/seed.ts",
     "seed:meals": "npx ts-node -r tsconfig-paths/register src/scripts/seed-meals.ts",
     "seed:workouts": "npx ts-node -r tsconfig-paths/register src/scripts/seed-workouts.ts",
-    "seed:dashboard": "npx ts-node -r tsconfig-paths/register src/scripts/seed-dashboard.ts"
+    "seed:dashboard": "npx ts-node -r tsconfig-paths/register src/scripts/seed-dashboard.ts",
+    "seed:notifications": "npx ts-node -r tsconfig-paths/register src/scripts/seed-notifications.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

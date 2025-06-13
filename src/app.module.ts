@@ -16,6 +16,7 @@ import { DiscountModule } from './discount/discount.module';
 import { MealModule } from './meal/meal.module';
 import { WorkoutModule } from './workout/workout.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { NotificationModule } from './notifications/notification.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     MealModule,
     WorkoutModule,
     DashboardModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [
