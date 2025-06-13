@@ -25,7 +25,8 @@
     "migration:revert": "npm run build && npm run typeorm -- migration:revert",
     "seed": "npx ts-node -r tsconfig-paths/register src/scripts/seed.ts",
     "seed:meals": "npx ts-node -r tsconfig-paths/register src/scripts/seed-meals.ts",
-    "seed:workouts": "npx ts-node -r tsconfig-paths/register src/scripts/seed-workouts.ts"
+    "seed:workouts": "npx ts-node -r tsconfig-paths/register src/scripts/seed-workouts.ts",
+    "seed:dashboard": "npx ts-node -r tsconfig-paths/register src/scripts/seed-dashboard.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -34,6 +35,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/typeorm": "^11.0.0",
     "bcrypt": "^6.0.0",

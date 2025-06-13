@@ -15,6 +15,7 @@ import { TargetAudienceModule } from './target-audience/target-audience.module';
 import { DiscountModule } from './discount/discount.module';
 import { MealModule } from './meal/meal.module';
 import { WorkoutModule } from './workout/workout.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { WorkoutModule } from './workout/workout.module';
     DiscountModule,
     MealModule,
     WorkoutModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [
