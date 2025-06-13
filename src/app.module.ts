@@ -17,6 +17,7 @@ import { MealModule } from './meal/meal.module';
 import { WorkoutModule } from './workout/workout.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { NotificationModule } from './notifications/notification.module';
+import { SubscribedTraineesModule } from './subscribed-trainees/subscribed-trainees.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { NotificationModule } from './notifications/notification.module';
     WorkoutModule,
     DashboardModule,
     NotificationModule,
+    SubscribedTraineesModule,
   ],
   controllers: [AppController],
   providers: [

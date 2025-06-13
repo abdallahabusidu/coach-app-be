@@ -165,4 +165,18 @@ export class CoachService {
     const profile = await this.findById(id);
     await this.coachProfileRepository.remove(profile);
   }
+
+  async createProfile(
+    userId: string,
+    createCoachProfileDto: CreateCoachProfileDto,
+  ): Promise<CoachProfileEntity> {
+    // Check if user exists
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    // Create or update coach profile
+    return this.create(userId, createCoachProfileDto);
+  }
 }

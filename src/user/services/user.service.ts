@@ -67,4 +67,21 @@ export class UserService {
     user.isActive = true;
     return this.userRepository.save(user);
   }
+  async create(userData: Partial<UserEntity>): Promise<UserEntity> {
+    const newUser = this.userRepository.create(userData);
+    return this.userRepository.save(newUser);
+  }
+
+  async createProfile(
+    userId: string,
+    profileData: Partial<UserEntity>,
+  ): Promise<UserEntity> {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const updatedProfile = this.userRepository.merge(user, profileData);
+    return this.userRepository.save(updatedProfile);
+  }
 }

@@ -75,6 +75,10 @@ export class CreateCoachProfileDto {
   @ApiProperty({
     description: 'List of certifications',
     type: [CertificateDto],
+    example: [
+      { name: 'NASM-CPT', issuer: 'NASM', year: 2018 },
+      { name: 'ACE Certified', issuer: 'ACE', year: 2019 },
+    ],
   })
   @IsArray()
   @ValidateNested({ each: true })
@@ -83,7 +87,7 @@ export class CreateCoachProfileDto {
 
   @ApiProperty({
     description: 'Hourly rate charged by the coach',
-    example: 50,
+    example: 75.0,
     minimum: 0,
   })
   @IsNumber()
@@ -127,7 +131,7 @@ export class CreateCoachProfileDto {
     description: 'Fitness areas the coach specializes in',
     enum: FitnessArea,
     isArray: true,
-    example: [FitnessArea.WEIGHT_LOSS, FitnessArea.STRENGTH_TRAINING],
+    example: ['weight_loss', 'strength_training'],
   })
   @IsArray()
   @IsEnum(FitnessArea, { each: true })
@@ -135,7 +139,7 @@ export class CreateCoachProfileDto {
 
   @ApiProperty({
     description: 'Days the coach is available',
-    example: ['Monday', 'Wednesday', 'Friday'],
+    example: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
     required: false,
   })
   @IsArray()
@@ -145,11 +149,25 @@ export class CreateCoachProfileDto {
 
   @ApiProperty({
     description: 'Available hours per day',
-    example: {
-      Monday: [{ start: '09:00', end: '17:00' }],
-    },
+    example: { start: '06:00', end: '20:00' },
     required: false,
   })
   @IsOptional()
   availableHours?: any;
+
+  @ApiProperty({
+    description: 'Is the coach verified?',
+    example: true,
+    required: false,
+  })
+  @IsOptional()
+  isVerified?: boolean;
+
+  @ApiProperty({
+    description: 'Has the coach completed onboarding?',
+    example: true,
+    required: false,
+  })
+  @IsOptional()
+  onboardingCompleted?: boolean;
 }

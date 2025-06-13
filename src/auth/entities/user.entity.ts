@@ -7,6 +7,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -123,6 +124,10 @@ export class UserEntity {
   })
   @Column({ nullable: true })
   refreshTokenExpires: Date;
+
+  // Relationships
+  @OneToOne('ClientProfileEntity', 'user')
+  clientProfile: any;
 
   @ApiProperty({ description: 'When the user account was created' })
   @CreateDateColumn()

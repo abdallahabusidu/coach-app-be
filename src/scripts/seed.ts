@@ -2,6 +2,7 @@ import { seedMeals } from './seed-meals';
 import { seedWorkouts } from './seed-workouts';
 import { seedDashboard } from './seed-dashboard';
 import { seedNotifications } from './seed-notifications';
+import { seedSubscribedTrainees } from './seed-subscribed-trainees';
 
 async function runAllSeeds() {
   console.log('🌱 Starting database seeding...\n');
