@@ -58,7 +58,10 @@ export class AdditionalNutritionDto {
 }
 
 export class LogMealDto {
-  @ApiPropertyOptional({ description: 'Trainee ID (coaches only - for logging meals for their trainees)' })
+  @ApiPropertyOptional({
+    description:
+      'Trainee ID (coaches only - for logging meals for their trainees)',
+  })
   @IsOptional()
   @IsUUID()
   traineeId?: string;
@@ -76,7 +79,10 @@ export class LogMealDto {
   @IsDateString()
   logDate: string;
 
-  @ApiProperty({ description: 'Time when the meal was consumed (HH:MM)', example: '08:30' })
+  @ApiProperty({
+    description: 'Time when the meal was consumed (HH:MM)',
+    example: '08:30',
+  })
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
     message: 'mealTime must be in HH:MM format',
@@ -93,7 +99,10 @@ export class LogMealDto {
   @Max(5.0)
   portionSize: number;
 
-  @ApiPropertyOptional({ description: 'Additional nutritional information', type: AdditionalNutritionDto })
+  @ApiPropertyOptional({
+    description: 'Additional nutritional information',
+    type: AdditionalNutritionDto,
+  })
   @IsOptional()
   @Type(() => AdditionalNutritionDto)
   additionalNutrition?: AdditionalNutritionDto;
@@ -154,7 +163,10 @@ export class UpdateNutritionLogDto {
   @Max(5.0)
   portionSize?: number;
 
-  @ApiPropertyOptional({ description: 'Additional nutritional information', type: AdditionalNutritionDto })
+  @ApiPropertyOptional({
+    description: 'Additional nutritional information',
+    type: AdditionalNutritionDto,
+  })
   @IsOptional()
   @Type(() => AdditionalNutritionDto)
   additionalNutrition?: AdditionalNutritionDto;
@@ -363,7 +375,10 @@ export class WeeklyNutritionReportDto {
   @ApiProperty({ description: 'Week end date' })
   weekEnd: Date;
 
-  @ApiProperty({ description: 'Daily summaries', type: [DailyNutritionSummaryDto] })
+  @ApiProperty({
+    description: 'Daily summaries',
+    type: [DailyNutritionSummaryDto],
+  })
   dailySummaries: DailyNutritionSummaryDto[];
 
   @ApiProperty({ description: 'Weekly averages' })

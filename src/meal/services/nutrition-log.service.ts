@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder, Between } from 'typeorm';
 import { NutritionLogEntity } from '../entities/nutrition-log.entity';
@@ -70,9 +75,15 @@ export class NutritionLogService {
     }
 
     // Calculate actual nutrition values based on portion size
-    const actualCalories = parseFloat((meal.calories * logDto.portionSize).toFixed(2));
-    const actualProtein = parseFloat((meal.protein * logDto.portionSize).toFixed(2));
-    const actualCarbs = parseFloat((meal.carbs * logDto.portionSize).toFixed(2));
+    const actualCalories = parseFloat(
+      (meal.calories * logDto.portionSize).toFixed(2),
+    );
+    const actualProtein = parseFloat(
+      (meal.protein * logDto.portionSize).toFixed(2),
+    );
+    const actualCarbs = parseFloat(
+      (meal.carbs * logDto.portionSize).toFixed(2),
+    );
     const actualFat = parseFloat((meal.fat * logDto.portionSize).toFixed(2));
 
     // Check for duplicate entry
@@ -212,10 +223,18 @@ export class NutritionLogService {
 
     // Recalculate nutrition values if portion size changed
     if (updateDto.portionSize !== undefined) {
-      log.actualCalories = parseFloat((log.meal.calories * updateDto.portionSize).toFixed(2));
-      log.actualProtein = parseFloat((log.meal.protein * updateDto.portionSize).toFixed(2));
-      log.actualCarbs = parseFloat((log.meal.carbs * updateDto.portionSize).toFixed(2));
-      log.actualFat = parseFloat((log.meal.fat * updateDto.portionSize).toFixed(2));
+      log.actualCalories = parseFloat(
+        (log.meal.calories * updateDto.portionSize).toFixed(2),
+      );
+      log.actualProtein = parseFloat(
+        (log.meal.protein * updateDto.portionSize).toFixed(2),
+      );
+      log.actualCarbs = parseFloat(
+        (log.meal.carbs * updateDto.portionSize).toFixed(2),
+      );
+      log.actualFat = parseFloat(
+        (log.meal.fat * updateDto.portionSize).toFixed(2),
+      );
     }
 
     const updatedLog = await this.nutritionLogRepository.save(log);
@@ -245,7 +264,7 @@ export class NutritionLogService {
     date: string,
   ): Promise<DailyNutritionSummaryDto> {
     const targetDate = new Date(date);
-    
+
     // Get all logs for the day
     const logs = await this.nutritionLogRepository.find({
       where: {
@@ -256,7 +275,10 @@ export class NutritionLogService {
     });
 
     // Calculate totals
-    const totalCalories = logs.reduce((sum, log) => sum + log.actualCalories, 0);
+    const totalCalories = logs.reduce(
+      (sum, log) => sum + log.actualCalories,
+      0,
+    );
     const totalProtein = logs.reduce((sum, log) => sum + log.actualProtein, 0);
     const totalCarbs = logs.reduce((sum, log) => sum + log.actualCarbs, 0);
     const totalFat = logs.reduce((sum, log) => sum + log.actualFat, 0);
@@ -264,7 +286,7 @@ export class NutritionLogService {
 
     // Get targets from active meal plan
     let targets = { calories: 2000, protein: 100, carbs: 250, fat: 70 }; // defaults
-    
+
     const activeMealPlan = await this.mealPlanRepository.findOne({
       where: { traineeId, status: PlanStatus.ACTIVE },
     });
@@ -285,10 +307,12 @@ export class NutritionLogService {
     const fatAdherence = (totalFat / targets.fat) * 100;
 
     // Calculate average meal rating
-    const ratedLogs = logs.filter(log => log.rating);
-    const averageMealRating = ratedLogs.length > 0 
-      ? ratedLogs.reduce((sum, log) => sum + (log.rating || 0), 0) / ratedLogs.length 
-      : undefined;
+    const ratedLogs = logs.filter((log) => log.rating);
+    const averageMealRating =
+      ratedLogs.length > 0
+        ? ratedLogs.reduce((sum, log) => sum + (log.rating || 0), 0) /
+          ratedLogs.length
+        : undefined;
 
     return {
       date: targetDate,
@@ -305,7 +329,9 @@ export class NutritionLogService {
       proteinAdherence: Math.round(proteinAdherence * 100) / 100,
       carbsAdherence: Math.round(carbsAdherence * 100) / 100,
       fatAdherence: Math.round(fatAdherence * 100) / 100,
-      averageMealRating: averageMealRating ? Math.round(averageMealRating * 100) / 100 : undefined,
+      averageMealRating: averageMealRating
+        ? Math.round(averageMealRating * 100) / 100
+        : undefined,
     };
   }
 
@@ -333,21 +359,28 @@ export class NutritionLogService {
 
     // Calculate weekly averages
     const weeklyAverages = {
-      calories: dailySummaries.reduce((sum, day) => sum + day.totalCalories, 0) / 7,
-      protein: dailySummaries.reduce((sum, day) => sum + day.totalProtein, 0) / 7,
+      calories:
+        dailySummaries.reduce((sum, day) => sum + day.totalCalories, 0) / 7,
+      protein:
+        dailySummaries.reduce((sum, day) => sum + day.totalProtein, 0) / 7,
       carbs: dailySummaries.reduce((sum, day) => sum + day.totalCarbs, 0) / 7,
       fat: dailySummaries.reduce((sum, day) => sum + day.totalFat, 0) / 7,
-      adherence: dailySummaries.reduce((sum, day) => sum + day.calorieAdherence, 0) / 7,
-      mealRating: dailySummaries.filter(day => day.averageMealRating).length > 0
-        ? dailySummaries
-          .filter(day => day.averageMealRating)
-          .reduce((sum, day) => sum + (day.averageMealRating || 0), 0) / 
-          dailySummaries.filter(day => day.averageMealRating).length
-        : 0,
+      adherence:
+        dailySummaries.reduce((sum, day) => sum + day.calorieAdherence, 0) / 7,
+      mealRating:
+        dailySummaries.filter((day) => day.averageMealRating).length > 0
+          ? dailySummaries
+              .filter((day) => day.averageMealRating)
+              .reduce((sum, day) => sum + (day.averageMealRating || 0), 0) /
+            dailySummaries.filter((day) => day.averageMealRating).length
+          : 0,
     };
 
     // Calculate weekly totals
-    const totalMealsLogged = dailySummaries.reduce((sum, day) => sum + day.mealsLogged, 0);
+    const totalMealsLogged = dailySummaries.reduce(
+      (sum, day) => sum + day.mealsLogged,
+      0,
+    );
     const plannedMeals = await this.nutritionLogRepository.count({
       where: {
         traineeId,
@@ -356,7 +389,8 @@ export class NutritionLogService {
       },
     });
 
-    const adherencePercentage = totalMealsLogged > 0 ? (plannedMeals / totalMealsLogged) * 100 : 0;
+    const adherencePercentage =
+      totalMealsLogged > 0 ? (plannedMeals / totalMealsLogged) * 100 : 0;
 
     // Get top meals for the week
     const topMealsQuery = await this.nutritionLogRepository
@@ -366,16 +400,19 @@ export class NutritionLogService {
         'log.mealId as mealId',
         'meal.name as mealName',
         'COUNT(log.id) as frequency',
-        'AVG(log.rating) as averageRating'
+        'AVG(log.rating) as averageRating',
       ])
       .where('log.traineeId = :traineeId', { traineeId })
-      .andWhere('log.logDate BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('log.logDate BETWEEN :startDate AND :endDate', {
+        startDate,
+        endDate,
+      })
       .groupBy('log.mealId, meal.name')
       .orderBy('frequency', 'DESC')
       .limit(5)
       .getRawMany();
 
-    const topMeals = topMealsQuery.map(item => ({
+    const topMeals = topMealsQuery.map((item) => ({
       mealId: item.mealId,
       mealName: item.mealName,
       frequency: parseInt(item.frequency),
@@ -425,9 +462,13 @@ export class NutritionLogService {
     filters: any,
   ): void {
     if (filters.dateFrom || filters.dateTo) {
-      const fromDate = filters.dateFrom ? new Date(filters.dateFrom) : new Date('1900-01-01');
-      const toDate = filters.dateTo ? new Date(filters.dateTo) : new Date('2100-12-31');
-      
+      const fromDate = filters.dateFrom
+        ? new Date(filters.dateFrom)
+        : new Date('1900-01-01');
+      const toDate = filters.dateTo
+        ? new Date(filters.dateTo)
+        : new Date('2100-12-31');
+
       queryBuilder.andWhere('log.logDate BETWEEN :fromDate AND :toDate', {
         fromDate,
         toDate,
@@ -488,24 +529,41 @@ export class NutritionLogService {
   ): NutritionLogResponseDto {
     return {
       id: log.id,
-      trainee: trainee || log.trainee ? {
-        id: (trainee || log.trainee).id,
-        name: `${(trainee || log.trainee).firstName} ${(trainee || log.trainee).lastName}`,
-      } : { id: log.traineeId, name: 'Unknown Trainee' },
-      meal: meal || log.meal ? {
-        id: (meal || log.meal).id,
-        name: (meal || log.meal).name,
-        mealType: (meal || log.meal).mealType,
-        calories: parseFloat((meal || log.meal).calories.toString()),
-        protein: parseFloat((meal || log.meal).protein.toString()),
-        carbs: parseFloat((meal || log.meal).carbs.toString()),
-        fat: parseFloat((meal || log.meal).fat.toString()),
-      } : { id: log.mealId, name: 'Unknown Meal', mealType: 'unknown', calories: 0, protein: 0, carbs: 0, fat: 0 },
-      mealPlan: mealPlan || log.mealPlan ? {
-        id: (mealPlan || log.mealPlan).id,
-        name: (mealPlan || log.mealPlan).name,
-        planType: (mealPlan || log.mealPlan).planType,
-      } : undefined,
+      trainee:
+        trainee || log.trainee
+          ? {
+              id: (trainee || log.trainee).id,
+              name: `${(trainee || log.trainee).firstName} ${(trainee || log.trainee).lastName}`,
+            }
+          : { id: log.traineeId, name: 'Unknown Trainee' },
+      meal:
+        meal || log.meal
+          ? {
+              id: (meal || log.meal).id,
+              name: (meal || log.meal).name,
+              mealType: (meal || log.meal).mealType,
+              calories: parseFloat((meal || log.meal).calories.toString()),
+              protein: parseFloat((meal || log.meal).protein.toString()),
+              carbs: parseFloat((meal || log.meal).carbs.toString()),
+              fat: parseFloat((meal || log.meal).fat.toString()),
+            }
+          : {
+              id: log.mealId,
+              name: 'Unknown Meal',
+              mealType: 'unknown',
+              calories: 0,
+              protein: 0,
+              carbs: 0,
+              fat: 0,
+            },
+      mealPlan:
+        mealPlan || log.mealPlan
+          ? {
+              id: (mealPlan || log.mealPlan).id,
+              name: (mealPlan || log.mealPlan).name,
+              planType: (mealPlan || log.mealPlan).planType,
+            }
+          : undefined,
       logDate: log.logDate,
       mealTime: log.mealTime,
       mealCategory: log.mealCategory,

@@ -46,7 +46,8 @@ export class MealPlanController {
   @Roles(UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Create a new meal plan',
-    description: 'Create a comprehensive meal plan with daily schedules, nutrition targets, and dietary preferences.',
+    description:
+      'Create a comprehensive meal plan with daily schedules, nutrition targets, and dietary preferences.',
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -73,7 +74,8 @@ export class MealPlanController {
   @Roles(UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get meal plans with filtering and pagination',
-    description: 'Retrieve meal plans created by the coach with optional filtering by type, status, trainee, etc.',
+    description:
+      'Retrieve meal plans created by the coach with optional filtering by type, status, trainee, etc.',
   })
   @ApiQuery({
     name: 'planType',
@@ -183,13 +185,13 @@ export class MealPlanController {
   ): Promise<MealPlanResponseDto> {
     const userId = (req.user as any).id;
     const userRole = (req.user as any).role;
-    
+
     // For coaches, use their coach profile ID
     let coachId = userId;
     if (userRole === UserRole.COACH) {
       coachId = (req.user as any).coachProfile?.id || userId;
     }
-    
+
     return this.mealPlanService.getMealPlanById(planId, coachId);
   }
 
@@ -231,7 +233,8 @@ export class MealPlanController {
   @Roles(UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Delete a meal plan',
-    description: 'Delete a meal plan. Can only delete plans that are not currently assigned to trainees.',
+    description:
+      'Delete a meal plan. Can only delete plans that are not currently assigned to trainees.',
   })
   @ApiParam({
     name: 'planId',
@@ -264,7 +267,8 @@ export class MealPlanController {
   @Roles(UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Assign a meal plan to a trainee',
-    description: 'Assign an existing meal plan to a specific trainee with optional customizations.',
+    description:
+      'Assign an existing meal plan to a specific trainee with optional customizations.',
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -291,7 +295,8 @@ export class MealPlanController {
   @Roles(UserRole.COACH, UserRole.TRAINEE, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get meal plans assigned to a specific trainee',
-    description: 'Retrieve all active meal plans assigned to a specific trainee.',
+    description:
+      'Retrieve all active meal plans assigned to a specific trainee.',
   })
   @ApiParam({
     name: 'traineeId',
@@ -334,7 +339,8 @@ export class MealPlanController {
   @Roles(UserRole.COACH, UserRole.TRAINEE, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get public meal plan templates',
-    description: 'Retrieve public meal plan templates that can be used as starting points for new plans.',
+    description:
+      'Retrieve public meal plan templates that can be used as starting points for new plans.',
   })
   @ApiQuery({
     name: 'planType',
@@ -384,7 +390,8 @@ export class MealPlanController {
   @Roles(UserRole.COACH, UserRole.TRAINEE, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get shopping list for a meal plan',
-    description: 'Generate and retrieve the shopping list for a specific meal plan.',
+    description:
+      'Generate and retrieve the shopping list for a specific meal plan.',
   })
   @ApiParam({
     name: 'planId',
@@ -431,19 +438,23 @@ export class MealPlanController {
   ): Promise<any> {
     const userId = (req.user as any).id;
     const userRole = (req.user as any).role;
-    
+
     let coachId = userId;
     if (userRole === UserRole.COACH) {
       coachId = (req.user as any).coachProfile?.id || userId;
     }
-    
+
     const plan = await this.mealPlanService.getMealPlanById(planId, coachId);
-    
-    const totalEstimatedCost = plan.shoppingList?.reduce((total, category) => {
-      return total + category.items.reduce((catTotal, item) => {
-        return catTotal + (item.estimated_cost || 0);
-      }, 0);
-    }, 0) || 0;
+
+    const totalEstimatedCost =
+      plan.shoppingList?.reduce((total, category) => {
+        return (
+          total +
+          category.items.reduce((catTotal, item) => {
+            return catTotal + (item.estimated_cost || 0);
+          }, 0)
+        );
+      }, 0) || 0;
 
     return {
       planId: plan.id,

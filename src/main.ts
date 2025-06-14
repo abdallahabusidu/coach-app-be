@@ -95,6 +95,10 @@ async function bootstrap() {
       'Workout Sessions',
       'Workout session scheduling, tracking, and progress monitoring',
     )
+    .addTag(
+      'Templates',
+      'Complete training templates combining workouts and meals with AI-powered recommendations',
+    )
     .addTag('Notifications', 'Push notifications and alert management')
     .addBearerAuth(
       {

@@ -14,7 +14,11 @@ import {
   Max,
   IsUUID,
 } from 'class-validator';
-import { MealPlanType, PlanStatus, DietaryRestriction } from '../entities/meal-plan.entity';
+import {
+  MealPlanType,
+  PlanStatus,
+  DietaryRestriction,
+} from '../entities/meal-plan.entity';
 
 export class DailyMealDto {
   @ApiProperty({ description: 'Meal ID' })
@@ -144,7 +148,10 @@ export class MealPreferencesDto {
   @IsEnum(['low', 'medium', 'high'])
   budget?: 'low' | 'medium' | 'high';
 
-  @ApiPropertyOptional({ description: 'Preferred cuisine types', type: [String] })
+  @ApiPropertyOptional({
+    description: 'Preferred cuisine types',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -193,31 +200,37 @@ export class CreateMealPlanDto {
     example: {
       day1: {
         breakfast: { mealId: 'uuid', portion: 1.0 },
-        lunch: { mealId: 'uuid', portion: 1.0 }
-      }
-    }
+        lunch: { mealId: 'uuid', portion: 1.0 },
+      },
+    },
   })
   @IsObject()
   schedule: {
     [day: string]: DayScheduleDto;
   };
 
-  @ApiProperty({ description: 'Nutritional targets for the plan', type: NutritionTargetsDto })
+  @ApiProperty({
+    description: 'Nutritional targets for the plan',
+    type: NutritionTargetsDto,
+  })
   @ValidateNested()
   @Type(() => NutritionTargetsDto)
   nutritionTargets: NutritionTargetsDto;
 
-  @ApiProperty({ 
-    description: 'Dietary restrictions', 
-    enum: DietaryRestriction, 
+  @ApiProperty({
+    description: 'Dietary restrictions',
+    enum: DietaryRestriction,
     isArray: true,
-    example: [DietaryRestriction.VEGETARIAN]
+    example: [DietaryRestriction.VEGETARIAN],
   })
   @IsArray()
   @IsEnum(DietaryRestriction, { each: true })
   dietaryRestrictions: DietaryRestriction[];
 
-  @ApiPropertyOptional({ description: 'Meal preferences and customizations', type: MealPreferencesDto })
+  @ApiPropertyOptional({
+    description: 'Meal preferences and customizations',
+    type: MealPreferencesDto,
+  })
   @IsOptional()
   @ValidateNested()
   @Type(() => MealPreferencesDto)
@@ -240,7 +253,10 @@ export class UpdateMealPlanDto {
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Status of the meal plan', enum: PlanStatus })
+  @ApiPropertyOptional({
+    description: 'Status of the meal plan',
+    enum: PlanStatus,
+  })
   @IsOptional()
   @IsEnum(PlanStatus)
   status?: PlanStatus;
@@ -257,9 +273,9 @@ export class UpdateMealPlanDto {
     example: {
       day1: {
         breakfast: { mealId: 'uuid', portion: 1.0 },
-        lunch: { mealId: 'uuid', portion: 1.0 }
-      }
-    }
+        lunch: { mealId: 'uuid', portion: 1.0 },
+      },
+    },
   })
   @IsOptional()
   @IsObject()
@@ -267,23 +283,29 @@ export class UpdateMealPlanDto {
     [day: string]: DayScheduleDto;
   };
 
-  @ApiPropertyOptional({ description: 'Nutritional targets for the plan', type: NutritionTargetsDto })
+  @ApiPropertyOptional({
+    description: 'Nutritional targets for the plan',
+    type: NutritionTargetsDto,
+  })
   @IsOptional()
   @ValidateNested()
   @Type(() => NutritionTargetsDto)
   nutritionTargets?: NutritionTargetsDto;
 
-  @ApiPropertyOptional({ 
-    description: 'Dietary restrictions', 
-    enum: DietaryRestriction, 
-    isArray: true 
+  @ApiPropertyOptional({
+    description: 'Dietary restrictions',
+    enum: DietaryRestriction,
+    isArray: true,
   })
   @IsOptional()
   @IsArray()
   @IsEnum(DietaryRestriction, { each: true })
   dietaryRestrictions?: DietaryRestriction[];
 
-  @ApiPropertyOptional({ description: 'Meal preferences and customizations', type: MealPreferencesDto })
+  @ApiPropertyOptional({
+    description: 'Meal preferences and customizations',
+    type: MealPreferencesDto,
+  })
   @IsOptional()
   @ValidateNested()
   @Type(() => MealPreferencesDto)
@@ -322,10 +344,10 @@ export class AssignMealPlanDto {
         {
           originalMealId: 'uuid1',
           replacementMealId: 'uuid2',
-          reason: 'Allergy to nuts'
-        }
-      ]
-    }
+          reason: 'Allergy to nuts',
+        },
+      ],
+    },
   })
   @IsOptional()
   @IsObject()

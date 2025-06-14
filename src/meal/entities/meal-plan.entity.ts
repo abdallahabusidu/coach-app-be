@@ -107,9 +107,9 @@ export class MealPlanEntity {
         breakfast: { mealId: 'uuid', portion: 1.0 },
         lunch: { mealId: 'uuid', portion: 1.0 },
         dinner: { mealId: 'uuid', portion: 1.0 },
-        snacks: [{ mealId: 'uuid', portion: 0.5 }]
-      }
-    }
+        snacks: [{ mealId: 'uuid', portion: 0.5 }],
+      },
+    },
   })
   @Column('jsonb')
   schedule: {
@@ -150,16 +150,16 @@ export class MealPlanEntity {
     water?: number; // liters
   };
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Dietary restrictions',
     enum: DietaryRestriction,
     isArray: true,
-    example: [DietaryRestriction.VEGETARIAN, DietaryRestriction.GLUTEN_FREE]
+    example: [DietaryRestriction.VEGETARIAN, DietaryRestriction.GLUTEN_FREE],
   })
-  @Column('enum', { 
-    enum: DietaryRestriction, 
-    array: true, 
-    default: [DietaryRestriction.NONE] 
+  @Column('enum', {
+    enum: DietaryRestriction,
+    array: true,
+    default: [DietaryRestriction.NONE],
   })
   dietaryRestrictions: DietaryRestriction[];
 

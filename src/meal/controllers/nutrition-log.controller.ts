@@ -46,7 +46,8 @@ export class NutritionLogController {
   @Roles(UserRole.TRAINEE, UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Log a meal consumption',
-    description: 'Log when a trainee consumes a meal with portion size and additional details.',
+    description:
+      'Log when a trainee consumes a meal with portion size and additional details.',
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -83,7 +84,8 @@ export class NutritionLogController {
   @Roles(UserRole.TRAINEE, UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get nutrition logs with filtering and pagination',
-    description: 'Retrieve nutrition logs. Trainees see their own logs, coaches see logs for their trainees.',
+    description:
+      'Retrieve nutrition logs. Trainees see their own logs, coaches see logs for their trainees.',
   })
   @ApiQuery({
     name: 'traineeId',
@@ -187,7 +189,8 @@ export class NutritionLogController {
   @Roles(UserRole.TRAINEE, UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get a specific nutrition log',
-    description: 'Retrieve detailed information about a specific nutrition log entry.',
+    description:
+      'Retrieve detailed information about a specific nutrition log entry.',
   })
   @ApiParam({
     name: 'logId',
@@ -217,7 +220,10 @@ export class NutritionLogController {
     if (userRole === UserRole.COACH) {
       // Coach should be able to view any log, but we need to handle this properly
       // For simplicity, we'll allow coaches to view any log for now
-      const log = await this.nutritionLogService.getNutritionLogById(logId, userId);
+      const log = await this.nutritionLogService.getNutritionLogById(
+        logId,
+        userId,
+      );
       return log;
     }
 
@@ -265,7 +271,11 @@ export class NutritionLogController {
       traineeId = userId;
     }
 
-    return this.nutritionLogService.updateNutritionLog(logId, traineeId, updateDto);
+    return this.nutritionLogService.updateNutritionLog(
+      logId,
+      traineeId,
+      updateDto,
+    );
   }
 
   @Delete(':logId')
@@ -308,7 +318,8 @@ export class NutritionLogController {
   @Roles(UserRole.TRAINEE, UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get daily nutrition summary',
-    description: 'Get nutritional summary for a specific day including totals, targets, and adherence.',
+    description:
+      'Get nutritional summary for a specific day including totals, targets, and adherence.',
   })
   @ApiParam({
     name: 'date',
@@ -342,14 +353,18 @@ export class NutritionLogController {
       targetTraineeId = userId;
     }
 
-    return this.nutritionLogService.getDailyNutritionSummary(targetTraineeId, date);
+    return this.nutritionLogService.getDailyNutritionSummary(
+      targetTraineeId,
+      date,
+    );
   }
 
   @Get('report/weekly/:weekStart')
   @Roles(UserRole.TRAINEE, UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get weekly nutrition report',
-    description: 'Get comprehensive weekly nutrition report with daily summaries, averages, and insights.',
+    description:
+      'Get comprehensive weekly nutrition report with daily summaries, averages, and insights.',
   })
   @ApiParam({
     name: 'weekStart',
@@ -383,14 +398,18 @@ export class NutritionLogController {
       targetTraineeId = userId;
     }
 
-    return this.nutritionLogService.getWeeklyNutritionReport(targetTraineeId, weekStart);
+    return this.nutritionLogService.getWeeklyNutritionReport(
+      targetTraineeId,
+      weekStart,
+    );
   }
 
   @Get('stats/overview')
   @Roles(UserRole.TRAINEE, UserRole.COACH, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get nutrition statistics overview',
-    description: 'Get overall nutrition statistics and progress metrics for a trainee.',
+    description:
+      'Get overall nutrition statistics and progress metrics for a trainee.',
   })
   @ApiQuery({
     name: 'traineeId',
@@ -445,40 +464,55 @@ export class NutritionLogController {
     }
 
     // Get logs for statistics
-    const logsResponse = await this.nutritionLogService.getNutritionLogs(targetTraineeId, {
-      dateFrom,
-      dateTo,
-      limit: 1000, // Get all logs for stats
-    });
+    const logsResponse = await this.nutritionLogService.getNutritionLogs(
+      targetTraineeId,
+      {
+        dateFrom,
+        dateTo,
+        limit: 1000, // Get all logs for stats
+      },
+    );
 
     const logs = logsResponse.logs;
 
     // Calculate statistics
     const totalMealsLogged = logs.length;
-    const averageDailyCalories = totalMealsLogged > 0 
-      ? logs.reduce((sum, log) => sum + log.actualCalories, 0) / totalMealsLogged 
-      : 0;
-    const averageDailyProtein = totalMealsLogged > 0 
-      ? logs.reduce((sum, log) => sum + log.actualProtein, 0) / totalMealsLogged 
-      : 0;
-    const averageDailyCarbs = totalMealsLogged > 0 
-      ? logs.reduce((sum, log) => sum + log.actualCarbs, 0) / totalMealsLogged 
-      : 0;
-    const averageDailyFat = totalMealsLogged > 0 
-      ? logs.reduce((sum, log) => sum + log.actualFat, 0) / totalMealsLogged 
-      : 0;
+    const averageDailyCalories =
+      totalMealsLogged > 0
+        ? logs.reduce((sum, log) => sum + log.actualCalories, 0) /
+          totalMealsLogged
+        : 0;
+    const averageDailyProtein =
+      totalMealsLogged > 0
+        ? logs.reduce((sum, log) => sum + log.actualProtein, 0) /
+          totalMealsLogged
+        : 0;
+    const averageDailyCarbs =
+      totalMealsLogged > 0
+        ? logs.reduce((sum, log) => sum + log.actualCarbs, 0) / totalMealsLogged
+        : 0;
+    const averageDailyFat =
+      totalMealsLogged > 0
+        ? logs.reduce((sum, log) => sum + log.actualFat, 0) / totalMealsLogged
+        : 0;
 
-    const plannedMeals = logs.filter(log => log.wasPlanned).length;
-    const overallAdherence = totalMealsLogged > 0 ? (plannedMeals / totalMealsLogged) * 100 : 0;
+    const plannedMeals = logs.filter((log) => log.wasPlanned).length;
+    const overallAdherence =
+      totalMealsLogged > 0 ? (plannedMeals / totalMealsLogged) * 100 : 0;
 
-    const ratedMeals = logs.filter(log => log.rating);
-    const averageMealRating = ratedMeals.length > 0 
-      ? ratedMeals.reduce((sum, log) => sum + (log.rating || 0), 0) / ratedMeals.length 
-      : 0;
+    const ratedMeals = logs.filter((log) => log.rating);
+    const averageMealRating =
+      ratedMeals.length > 0
+        ? ratedMeals.reduce((sum, log) => sum + (log.rating || 0), 0) /
+          ratedMeals.length
+        : 0;
 
     // Group meals by name and count frequency
-    const mealFrequency: Record<string, { count: number; totalRating: number; ratingCount: number }> = {};
-    logs.forEach(log => {
+    const mealFrequency: Record<
+      string,
+      { count: number; totalRating: number; ratingCount: number }
+    > = {};
+    logs.forEach((log) => {
       const mealName = log.meal.name;
       if (!mealFrequency[mealName]) {
         mealFrequency[mealName] = { count: 0, totalRating: 0, ratingCount: 0 };
@@ -494,7 +528,8 @@ export class NutritionLogController {
       .map(([name, data]) => ({
         mealName: name,
         frequency: data.count,
-        averageRating: data.ratingCount > 0 ? data.totalRating / data.ratingCount : 0,
+        averageRating:
+          data.ratingCount > 0 ? data.totalRating / data.ratingCount : 0,
       }))
       .sort((a, b) => b.frequency - a.frequency)
       .slice(0, 5);

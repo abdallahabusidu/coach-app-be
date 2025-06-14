@@ -68,7 +68,9 @@ export class NutritionLogEntity {
   @Column('decimal', { precision: 4, scale: 2, default: 1.0 })
   portionSize: number;
 
-  @ApiProperty({ description: 'Actual calories consumed (calculated from meal * portion)' })
+  @ApiProperty({
+    description: 'Actual calories consumed (calculated from meal * portion)',
+  })
   @Column('decimal', { precision: 8, scale: 2 })
   actualCalories: number;
 

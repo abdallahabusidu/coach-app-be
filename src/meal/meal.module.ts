@@ -24,20 +24,8 @@ import { AuthModule } from '../auth/auth.module';
     ]),
     AuthModule, // Import AuthModule for guards and decorators
   ],
-  controllers: [
-    MealController,
-    MealPlanController,
-    NutritionLogController,
-  ],
-  providers: [
-    MealService,
-    MealPlanService,
-    NutritionLogService,
-  ],
-  exports: [
-    MealService,
-    MealPlanService,
-    NutritionLogService,
-  ], // Export services for potential use in other modules
+  controllers: [MealController, MealPlanController, NutritionLogController],
+  providers: [MealService, MealPlanService, NutritionLogService],
+  exports: [MealService, MealPlanService, NutritionLogService], // Export services for potential use in other modules
 })
 export class MealModule {}

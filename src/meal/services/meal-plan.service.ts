@@ -1,7 +1,16 @@
-import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { MealPlanEntity, MealPlanType, PlanStatus } from '../entities/meal-plan.entity';
+import {
+  MealPlanEntity,
+  MealPlanType,
+  PlanStatus,
+} from '../entities/meal-plan.entity';
 import { MealAssignmentEntity } from '../entities/meal-assignment.entity';
 import { UserEntity, UserRole } from '../../auth/entities/user.entity';
 import {
@@ -306,7 +315,11 @@ export class MealPlanService {
       .createQueryBuilder('plan')
       .leftJoinAndSelect('plan.coach', 'coach')
       .leftJoinAndSelect('plan.trainee', 'trainee')
-      .innerJoin('meal_assignments', 'assignment', 'assignment.mealPlanId = plan.id')
+      .innerJoin(
+        'meal_assignments',
+        'assignment',
+        'assignment.mealPlanId = plan.id',
+      )
       .where('assignment.traineeId = :traineeId', { traineeId })
       .andWhere('assignment.isActive = :isActive', { isActive: true });
 
@@ -337,26 +350,51 @@ export class MealPlanService {
   private async generateShoppingList(schedule: any): Promise<any[]> {
     // This is a simplified implementation
     // In a real app, you'd query meals and aggregate ingredients
-    
+
     const categories = [
       {
         category: 'Proteins',
         items: [
-          { name: 'Chicken Breast', quantity: '2', unit: 'lbs', estimated_cost: 15.99 },
-          { name: 'Salmon Fillet', quantity: '1', unit: 'lb', estimated_cost: 12.99 },
+          {
+            name: 'Chicken Breast',
+            quantity: '2',
+            unit: 'lbs',
+            estimated_cost: 15.99,
+          },
+          {
+            name: 'Salmon Fillet',
+            quantity: '1',
+            unit: 'lb',
+            estimated_cost: 12.99,
+          },
         ],
       },
       {
         category: 'Vegetables',
         items: [
-          { name: 'Mixed Greens', quantity: '2', unit: 'bags', estimated_cost: 6.99 },
-          { name: 'Broccoli', quantity: '3', unit: 'heads', estimated_cost: 4.50 },
+          {
+            name: 'Mixed Greens',
+            quantity: '2',
+            unit: 'bags',
+            estimated_cost: 6.99,
+          },
+          {
+            name: 'Broccoli',
+            quantity: '3',
+            unit: 'heads',
+            estimated_cost: 4.5,
+          },
         ],
       },
       {
         category: 'Grains',
         items: [
-          { name: 'Brown Rice', quantity: '2', unit: 'lbs', estimated_cost: 3.99 },
+          {
+            name: 'Brown Rice',
+            quantity: '2',
+            unit: 'lbs',
+            estimated_cost: 3.99,
+          },
           { name: 'Quinoa', quantity: '1', unit: 'bag', estimated_cost: 5.99 },
         ],
       },
@@ -381,7 +419,7 @@ export class MealPlanService {
     const plan = await this.mealPlanRepository.findOne({
       where: { id: mealPlanId },
     });
-    
+
     if (plan) {
       endDate.setDate(startDate.getDate() + plan.durationDays);
     }
@@ -487,14 +525,20 @@ export class MealPlanService {
       description: plan.description,
       planType: plan.planType,
       durationDays: plan.durationDays,
-      coach: coach || plan.coach ? {
-        id: (coach || plan.coach).id,
-        name: `${(coach || plan.coach).firstName} ${(coach || plan.coach).lastName}`,
-      } : { id: plan.coachId, name: 'Unknown Coach' },
-      trainee: trainee || plan.trainee ? {
-        id: (trainee || plan.trainee).id,
-        name: `${(trainee || plan.trainee).firstName} ${(trainee || plan.trainee).lastName}`,
-      } : undefined,
+      coach:
+        coach || plan.coach
+          ? {
+              id: (coach || plan.coach).id,
+              name: `${(coach || plan.coach).firstName} ${(coach || plan.coach).lastName}`,
+            }
+          : { id: plan.coachId, name: 'Unknown Coach' },
+      trainee:
+        trainee || plan.trainee
+          ? {
+              id: (trainee || plan.trainee).id,
+              name: `${(trainee || plan.trainee).firstName} ${(trainee || plan.trainee).lastName}`,
+            }
+          : undefined,
       status: plan.status,
       schedule: plan.schedule,
       nutritionTargets: plan.nutritionTargets,
@@ -507,7 +551,9 @@ export class MealPlanService {
       createdAt: plan.createdAt,
       startDate: plan.startDate,
       endDate: plan.endDate,
-      estimatedWeeklyCost: plan.estimatedWeeklyCost ? parseFloat(plan.estimatedWeeklyCost.toString()) : undefined,
+      estimatedWeeklyCost: plan.estimatedWeeklyCost
+        ? parseFloat(plan.estimatedWeeklyCost.toString())
+        : undefined,
     };
   }
 }

@@ -61,7 +61,9 @@ export class MealAssignmentEntity {
   @Index()
   isActive: boolean;
 
-  @ApiProperty({ description: 'Custom modifications to the plan for this trainee' })
+  @ApiProperty({
+    description: 'Custom modifications to the plan for this trainee',
+  })
   @Column('jsonb', { nullable: true })
   customizations?: {
     modifiedMeals?: {
