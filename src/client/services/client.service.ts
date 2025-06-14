@@ -68,9 +68,9 @@ export class ClientService {
     }
 
     // Check if user is already a client
-    if (user.role !== UserRole.CLIENT) {
+    if (user.role !== UserRole.TRAINEE) {
       // Update user role to client
-      user.role = UserRole.CLIENT;
+      user.role = UserRole.TRAINEE;
       await this.userRepository.save(user);
     }
 

@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 
 export enum UserRole {
-  CLIENT = 'client',
+  TRAINEE = 'trainee',
   COACH = 'coach',
   ADMIN = 'admin',
 }
@@ -48,12 +48,12 @@ export class UserEntity {
   @ApiProperty({
     description: "User's role in the system",
     enum: UserRole,
-    default: UserRole.CLIENT,
+    default: UserRole.TRAINEE,
   })
   @Column({
     type: 'enum',
     enum: UserRole,
-    default: UserRole.CLIENT,
+    default: UserRole.TRAINEE,
   })
   role: UserRole;
 
@@ -127,7 +127,7 @@ export class UserEntity {
 
   // Relationships
   @OneToOne('ClientProfileEntity', 'user')
-  clientProfile: any;
+  traineeProfile: any;
 
   @ApiProperty({ description: 'When the user account was created' })
   @CreateDateColumn()

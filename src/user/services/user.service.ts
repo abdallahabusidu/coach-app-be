@@ -49,7 +49,7 @@ export class UserService {
   }
 
   async findClients(): Promise<UserEntity[]> {
-    return this.findByRole(UserRole.CLIENT);
+    return this.findByRole(UserRole.TRAINEE);
   }
 
   async findCoaches(): Promise<UserEntity[]> {

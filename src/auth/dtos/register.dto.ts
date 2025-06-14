@@ -55,7 +55,7 @@ export class RegisterDto {
   @ApiProperty({
     description: 'The role of the user in the system',
     enum: UserRole,
-    default: UserRole.CLIENT,
+    default: UserRole.TRAINEE,
     required: false,
   })
   @IsEnum(UserRole)

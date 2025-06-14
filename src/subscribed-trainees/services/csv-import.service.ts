@@ -314,7 +314,7 @@ export class CsvImportService {
       email: data.email,
       phone: data.phone,
       password: hashedPassword,
-      role: UserRole.CLIENT,
+      role: UserRole.TRAINEE,
       isActive: true,
     });
 

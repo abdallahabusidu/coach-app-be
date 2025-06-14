@@ -121,6 +121,18 @@ export class TraineeProgressEntity {
       description: string;
       date: string;
     }[];
+    daily?: {
+      [date: string]: {
+        mealsLogged?: number;
+        mealsTarget?: number;
+        workoutCompleted?: boolean;
+        cardioMinutes?: number;
+        cardioTarget?: number;
+        waterIntake?: number;
+        waterTarget?: number;
+        progressPercentage?: number;
+      };
+    };
   };
 
   @ApiProperty({ description: 'When the progress record was created' })

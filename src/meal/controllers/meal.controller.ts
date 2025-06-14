@@ -23,7 +23,10 @@ import { MealService } from '../services/meal.service';
 import { CreateMealDto } from '../dtos/create-meal.dto';
 import { UpdateMealDto } from '../dtos/update-meal.dto';
 import { MealQueryDto } from '../dtos/meal-query.dto';
-import { MealResponseDto, PaginatedMealsResponseDto } from '../dtos/meal-response.dto';
+import {
+  MealResponseDto,
+  PaginatedMealsResponseDto,
+} from '../dtos/meal-response.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
@@ -39,9 +42,10 @@ export class MealController {
 
   @Post()
   @Roles(UserRole.COACH)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create a new meal (Coach only)',
-    description: 'Create a new meal with nutritional information. Only coaches can create meals.'
+    description:
+      'Create a new meal with nutritional information. Only coaches can create meals.',
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -65,17 +69,35 @@ export class MealController {
   }
 
   @Get()
-  @Roles(UserRole.COACH, UserRole.CLIENT)
-  @ApiOperation({ 
+  @Roles(UserRole.COACH, UserRole.TRAINEE)
+  @ApiOperation({
     summary: 'Get all meals with filtering and pagination',
-    description: 'Retrieve a paginated list of meals with optional filtering by type, search, calories, and protein.'
+    description:
+      'Retrieve a paginated list of meals with optional filtering by type, search, calories, and protein.',
   })
   @ApiQuery({ name: 'page', required: false, description: 'Page number' })
   @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
-  @ApiQuery({ name: 'mealType', enum: MealType, required: false, description: 'Filter by meal type' })
-  @ApiQuery({ name: 'search', required: false, description: 'Search by name or description' })
-  @ApiQuery({ name: 'maxCalories', required: false, description: 'Maximum calories' })
-  @ApiQuery({ name: 'minProtein', required: false, description: 'Minimum protein content' })
+  @ApiQuery({
+    name: 'mealType',
+    enum: MealType,
+    required: false,
+    description: 'Filter by meal type',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Search by name or description',
+  })
+  @ApiQuery({
+    name: 'maxCalories',
+    required: false,
+    description: 'Maximum calories',
+  })
+  @ApiQuery({
+    name: 'minProtein',
+    required: false,
+    description: 'Minimum protein content',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Meals retrieved successfully',
@@ -85,15 +107,18 @@ export class MealController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized - Invalid or missing authentication token',
   })
-  async findAll(@Query() queryDto: MealQueryDto): Promise<PaginatedMealsResponseDto> {
+  async findAll(
+    @Query() queryDto: MealQueryDto,
+  ): Promise<PaginatedMealsResponseDto> {
     return this.mealService.findAll(queryDto);
   }
 
   @Get('statistics')
   @Roles(UserRole.COACH)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get meal statistics (Coach only)',
-    description: 'Get statistical information about meals including totals by type and averages.'
+    description:
+      'Get statistical information about meals including totals by type and averages.',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -112,12 +137,17 @@ export class MealController {
   }
 
   @Get('type/:mealType')
-  @Roles(UserRole.COACH, UserRole.CLIENT)
-  @ApiOperation({ 
+  @Roles(UserRole.COACH, UserRole.TRAINEE)
+  @ApiOperation({
     summary: 'Get meals by type',
-    description: 'Retrieve all meals of a specific type (breakfast, lunch, dinner, snacks, drinks).'
+    description:
+      'Retrieve all meals of a specific type (breakfast, lunch, dinner, snacks, drinks).',
   })
-  @ApiParam({ name: 'mealType', enum: MealType, description: 'Type of meal to retrieve' })
+  @ApiParam({
+    name: 'mealType',
+    enum: MealType,
+    description: 'Type of meal to retrieve',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Meals retrieved successfully',
@@ -131,15 +161,17 @@ export class MealController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad Request - Invalid meal type',
   })
-  async findByType(@Param('mealType') mealType: MealType): Promise<MealResponseDto[]> {
+  async findByType(
+    @Param('mealType') mealType: MealType,
+  ): Promise<MealResponseDto[]> {
     return this.mealService.findByType(mealType);
   }
 
   @Get(':id')
-  @Roles(UserRole.COACH, UserRole.CLIENT)
-  @ApiOperation({ 
+  @Roles(UserRole.COACH, UserRole.TRAINEE)
+  @ApiOperation({
     summary: 'Get a meal by ID',
-    description: 'Retrieve detailed information about a specific meal.'
+    description: 'Retrieve detailed information about a specific meal.',
   })
   @ApiParam({ name: 'id', description: 'Meal ID (UUID)' })
   @ApiResponse({
@@ -155,15 +187,17 @@ export class MealController {
     status: HttpStatus.NOT_FOUND,
     description: 'Meal not found',
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<MealResponseDto> {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<MealResponseDto> {
     return this.mealService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.COACH)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update a meal (Coach only)',
-    description: 'Update an existing meal. Only coaches can update meals.'
+    description: 'Update an existing meal. Only coaches can update meals.',
   })
   @ApiParam({ name: 'id', description: 'Meal ID (UUID)' })
   @ApiResponse({
@@ -192,9 +226,9 @@ export class MealController {
 
   @Delete(':id')
   @Roles(UserRole.COACH)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Delete a meal (Coach only)',
-    description: 'Delete an existing meal. Only coaches can delete meals.'
+    description: 'Delete an existing meal. Only coaches can delete meals.',
   })
   @ApiParam({ name: 'id', description: 'Meal ID (UUID)' })
   @ApiResponse({
@@ -213,7 +247,9 @@ export class MealController {
     status: HttpStatus.NOT_FOUND,
     description: 'Meal not found',
   })
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<{ message: string }> {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<{ message: string }> {
     return this.mealService.remove(id);
   }
 }

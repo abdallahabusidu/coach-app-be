@@ -176,7 +176,7 @@ export async function seedSubscribedTrainees() {
           email: traineeData.email,
           phone: traineeData.phone,
           password: traineeData.password,
-          role: UserRole.CLIENT,
+          role: UserRole.TRAINEE,
         };
 
         const newUser = await userService.create(userData);
