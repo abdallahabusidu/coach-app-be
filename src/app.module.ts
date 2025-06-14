@@ -22,6 +22,7 @@ import { NotificationModule } from './notifications/notification.module';
 import { SubscribedTraineesModule } from './subscribed-trainees/subscribed-trainees.module';
 import { PaymentsModule } from './payments/payments.module';
 import { FeedModule } from './feed/feed.module';
+import { PromotedBusinessModule } from './promoted-businesses/promoted-business.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { FeedModule } from './feed/feed.module';
     SubscribedTraineesModule,
     PaymentsModule,
     FeedModule,
+    PromotedBusinessModule,
   ],
   controllers: [AppController],
   providers: [

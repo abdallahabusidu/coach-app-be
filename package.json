@@ -37,6 +37,7 @@
     "test:commission-model": "./test-commission-model.sh",
     "test:coach-boosting": "./test-coach-boosting.sh",
     "test:coach-feed": "./test-coach-feed.sh",
+    "test:promoted-businesses": "./test-promoted-businesses.sh",
     "test:complete-platform": "./test-complete-platform.sh"
   },
   "dependencies": {
