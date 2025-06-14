@@ -8,6 +8,7 @@ import { SubscriptionEntity } from './entities/subscription.entity';
 import { ProductEntity } from './entities/product.entity';
 import { CoachSubscriptionEntity } from './entities/coach-subscription.entity';
 import { ClientSubscriptionEntity } from './entities/client-subscription.entity';
+import { CoachBoostEntity } from './entities/coach-boost.entity';
 import { UserEntity } from '../auth/entities/user.entity';
 
 // Services
@@ -16,6 +17,7 @@ import { SubscriptionService } from './services/subscription.service';
 import { ProductService } from './services/product.service';
 import { CoachSubscriptionService } from './services/coach-subscription.service';
 import { ClientSubscriptionService } from './services/client-subscription.service';
+import { CoachBoostService } from './services/coach-boost.service';
 
 // Controllers
 import { PaymentController } from './controllers/payment.controller';
@@ -23,6 +25,7 @@ import { SubscriptionController } from './controllers/subscription.controller';
 import { ProductController } from './controllers/product.controller';
 import { CoachSubscriptionController } from './controllers/coach-subscription.controller';
 import { ClientSubscriptionController } from './controllers/client-subscription.controller';
+import { CoachBoostController } from './controllers/coach-boost.controller';
 
 @Module({
   imports: [
@@ -32,6 +35,7 @@ import { ClientSubscriptionController } from './controllers/client-subscription.
       ProductEntity,
       CoachSubscriptionEntity,
       ClientSubscriptionEntity,
+      CoachBoostEntity,
       UserEntity,
     ]),
     ScheduleModule.forRoot(), // For subscription cron jobs
@@ -42,6 +46,7 @@ import { ClientSubscriptionController } from './controllers/client-subscription.
     ProductService,
     CoachSubscriptionService,
     ClientSubscriptionService,
+    CoachBoostService,
   ],
   controllers: [
     PaymentController,
@@ -49,6 +54,7 @@ import { ClientSubscriptionController } from './controllers/client-subscription.
     ProductController,
     CoachSubscriptionController,
     ClientSubscriptionController,
+    CoachBoostController,
   ],
   exports: [
     PaymentService,
@@ -56,6 +62,7 @@ import { ClientSubscriptionController } from './controllers/client-subscription.
     ProductService,
     CoachSubscriptionService,
     ClientSubscriptionService,
+    CoachBoostService,
   ],
 })
 export class PaymentsModule {}

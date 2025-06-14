@@ -34,7 +34,10 @@
     "test:payments": "./test-payment-system.sh",
     "test:payment-api": "node test-payment-api.js",
     "test:coach-subscriptions": "./test-coach-subscriptions.sh",
-    "test:commission-model": "./test-commission-model.sh"
+    "test:commission-model": "./test-commission-model.sh",
+    "test:coach-boosting": "./test-coach-boosting.sh",
+    "test:coach-feed": "./test-coach-feed.sh",
+    "test:complete-platform": "./test-complete-platform.sh"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
