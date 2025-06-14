@@ -86,7 +86,15 @@ async function bootstrap() {
       'Analytics, statistics, and dashboard data for coaches',
     )
     .addTag('Meals', 'Meal planning and nutrition management')
-    .addTag('Workouts', 'Workout plan creation and management')
+    .addTag('Workouts', 'Individual workout creation and management')
+    .addTag(
+      'Workout Plans',
+      'Comprehensive workout plan creation, assignment, and tracking',
+    )
+    .addTag(
+      'Workout Sessions',
+      'Workout session scheduling, tracking, and progress monitoring',
+    )
     .addTag('Notifications', 'Push notifications and alert management')
     .addBearerAuth(
       {
