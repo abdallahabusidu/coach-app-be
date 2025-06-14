@@ -30,8 +30,11 @@
     "seed:notifications": "npx ts-node -r tsconfig-paths/register src/scripts/seed-notifications.ts",
     "seed:trainees": "npx ts-node -r tsconfig-paths/register src/scripts/seed-subscribed-trainees.ts",
     "seed:products": "npx ts-node -r tsconfig-paths/register src/scripts/seed-products.ts",
+    "seed:coach-subscriptions": "npx ts-node -r tsconfig-paths/register src/scripts/seed-coach-subscriptions.ts",
     "test:payments": "./test-payment-system.sh",
-    "test:payment-api": "node test-payment-api.js"
+    "test:payment-api": "node test-payment-api.js",
+    "test:coach-subscriptions": "./test-coach-subscriptions.sh",
+    "test:commission-model": "./test-commission-model.sh"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
