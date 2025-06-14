@@ -1,26 +1,26 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
-import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 // Controllers
 import { MessagesController } from './controllers/messages.controller';
 
 // Services
-import { MessageRequestService } from './services/message-request.service';
 import { MessagesService } from './services/messages.service';
+import { MessageRequestService } from './services/message-request.service';
 
 // Gateways
 import { MessagesGateway } from './gateways/messages.gateway';
 
 // Entities
+import { MessageEntity } from './entities/message.entity';
+import { ConversationEntity } from './entities/conversation.entity';
+import { MessageRequestEntity } from './entities/message-request.entity';
 import { UserEntity } from '../auth/entities/user.entity';
 import { ClientProfileEntity } from '../client/entities/client-profile.entity';
 import { CoachProfileEntity } from '../coach/entities/coach-profile.entity';
-import { ConversationEntity } from './entities/conversation.entity';
-import { MessageRequestEntity } from './entities/message-request.entity';
-import { MessageEntity } from './entities/message.entity';
 
 @Module({
   imports: [

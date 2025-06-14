@@ -1,32 +1,32 @@
 import {
-  BadRequestException,
-  ForbiddenException,
   Injectable,
-  Logger,
   NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { UserEntity } from '../../auth/entities/user.entity';
-import {
-  ConversationDto,
-  ConversationFilterDto,
-  ConversationListDto,
-  MessageDto,
-  MessageFilterDto,
-  MessageListDto,
-  SendMessageDto,
-  UpdateConversationDto,
-} from '../dtos/message.dto';
-import {
-  ConversationEntity,
-  ConversationStatus,
-} from '../entities/conversation.entity';
 import {
   MessageEntity,
   MessageStatus,
   MessageType,
 } from '../entities/message.entity';
+import {
+  ConversationEntity,
+  ConversationStatus,
+} from '../entities/conversation.entity';
+import { UserEntity } from '../../auth/entities/user.entity';
+import {
+  SendMessageDto,
+  MessageDto,
+  MessageListDto,
+  ConversationDto,
+  ConversationListDto,
+  MessageFilterDto,
+  ConversationFilterDto,
+  UpdateConversationDto,
+} from '../dtos/message.dto';
 
 @Injectable()
 export class MessagesService {

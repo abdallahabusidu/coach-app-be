@@ -1,22 +1,23 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
+  IsEnum,
   IsUUID,
-  Max,
+  IsNotEmpty,
   MaxLength,
-  Min,
   MinLength,
+  IsNumber,
+  Min,
+  Max,
+  IsBoolean,
+  IsArray,
+  ValidateNested,
 } from 'class-validator';
+import { MessageType, MessageStatus } from '../entities/message.entity';
 import { ConversationStatus } from '../entities/conversation.entity';
 import { MessageRequestStatus } from '../entities/message-request.entity';
-import { MessageStatus, MessageType } from '../entities/message.entity';
 
 // Message DTOs
 export class SendMessageDto {

@@ -1,14 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 import { UserEntity } from '../../auth/entities/user.entity';
 
 export enum MessageRequestStatus {

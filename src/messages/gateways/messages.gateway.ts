@@ -1,26 +1,27 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import {
-  ConnectedSocket,
+  WebSocketGateway,
+  SubscribeMessage,
   MessageBody,
+  ConnectedSocket,
+  OnGatewayInit,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
-  SubscribeMessage,
-  WebSocketGateway,
   WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import {
-  CreateMessageRequestDto,
-  JoinRoomDto,
-  RespondToMessageRequestDto,
-  SendMessageDto,
-  TypingIndicatorDto,
-} from '../dtos/message.dto';
-import { MessageRequestService } from '../services/message-request.service';
+import { UseGuards, Logger, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { MessagesService } from '../services/messages.service';
+import { MessageRequestService } from '../services/message-request.service';
+import {
+  SendMessageDto,
+  JoinRoomDto,
+  TypingIndicatorDto,
+  MessageDto,
+  CreateMessageRequestDto,
+  RespondToMessageRequestDto,
+} from '../dtos/message.dto';
 
 interface AuthenticatedSocket extends Socket {
   userId?: string;
