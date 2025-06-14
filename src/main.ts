@@ -99,6 +99,10 @@ async function bootstrap() {
       'Templates',
       'Complete training templates combining workouts and meals with AI-powered recommendations',
     )
+    .addTag(
+      'Tasks',
+      'Task assignment and completion system for trainee engagement and progress tracking',
+    )
     .addTag('Notifications', 'Push notifications and alert management')
     .addBearerAuth(
       {

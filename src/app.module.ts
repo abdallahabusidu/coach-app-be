@@ -16,6 +16,7 @@ import { DiscountModule } from './discount/discount.module';
 import { MealModule } from './meal/meal.module';
 import { WorkoutModule } from './workout/workout.module';
 import { TemplateModule } from './template/template.module';
+import { TaskModule } from './tasks/task.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { NotificationModule } from './notifications/notification.module';
 import { SubscribedTraineesModule } from './subscribed-trainees/subscribed-trainees.module';
@@ -35,6 +36,7 @@ import { SubscribedTraineesModule } from './subscribed-trainees/subscribed-train
     MealModule,
     WorkoutModule,
     TemplateModule,
+    TaskModule,
     DashboardModule,
     NotificationModule,
     SubscribedTraineesModule,
