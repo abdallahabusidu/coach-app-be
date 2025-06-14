@@ -28,7 +28,10 @@
     "seed:workouts": "npx ts-node -r tsconfig-paths/register src/scripts/seed-workouts.ts",
     "seed:dashboard": "npx ts-node -r tsconfig-paths/register src/scripts/seed-dashboard.ts",
     "seed:notifications": "npx ts-node -r tsconfig-paths/register src/scripts/seed-notifications.ts",
-    "seed:trainees": "npx ts-node -r tsconfig-paths/register src/scripts/seed-subscribed-trainees.ts"
+    "seed:trainees": "npx ts-node -r tsconfig-paths/register src/scripts/seed-subscribed-trainees.ts",
+    "seed:products": "npx ts-node -r tsconfig-paths/register src/scripts/seed-products.ts",
+    "test:payments": "./test-payment-system.sh",
+    "test:payment-api": "node test-payment-api.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

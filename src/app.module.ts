@@ -20,6 +20,7 @@ import { TaskModule } from './tasks/task.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { NotificationModule } from './notifications/notification.module';
 import { SubscribedTraineesModule } from './subscribed-trainees/subscribed-trainees.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { SubscribedTraineesModule } from './subscribed-trainees/subscribed-train
     DashboardModule,
     NotificationModule,
     SubscribedTraineesModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [
