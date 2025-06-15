@@ -158,7 +158,6 @@ export interface BusinessContract {
 
 @Entity('promoted_businesses')
 @Index(['businessType', 'status'])
-@Index(['city', 'businessType'])
 @Index(['promotionType', 'status'])
 @Index(['contractEndDate'])
 @Index(['priority'])
@@ -298,6 +297,10 @@ export class PromotedBusinessEntity {
   @ApiProperty({ description: 'Business last update date' })
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ApiProperty({ description: 'Business city' })
+  @Column()
+  city: string;
 
   // Computed properties
   get isActive(): boolean {
