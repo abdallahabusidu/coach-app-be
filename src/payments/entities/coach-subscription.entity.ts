@@ -277,7 +277,6 @@ export class CoachSubscriptionEntity {
 
   @ApiProperty({ description: 'Subscription creation date' })
   @CreateDateColumn()
-  @Index()
   createdAt: Date;
 
   @ApiProperty({ description: 'Subscription last update date' })

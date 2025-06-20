@@ -121,7 +121,6 @@ export class FeedInteractionEntity {
 
   @ApiProperty({ description: 'Interaction creation date' })
   @CreateDateColumn()
-  @Index()
   createdAt: Date;
 
   @ApiProperty({ description: 'Interaction last update date' })

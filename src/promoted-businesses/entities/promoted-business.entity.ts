@@ -242,7 +242,6 @@ export class PromotedBusinessEntity {
 
   @ApiProperty({ description: 'Priority level for display ordering (1-10)' })
   @Column('int', { default: 5 })
-  @Index()
   priority: number;
 
   @ApiProperty({ description: 'Is business currently featured' })
@@ -279,7 +278,6 @@ export class PromotedBusinessEntity {
 
   @ApiProperty({ description: 'Contract end date' })
   @Column('timestamp with time zone')
-  @Index()
   contractEndDate: Date;
 
   @ApiProperty({ description: 'Last payment date' })
@@ -298,7 +296,9 @@ export class PromotedBusinessEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ApiProperty({ description: 'Business city' })
+  @ApiProperty({
+    description: 'Business city',
+  })
   @Column()
   city: string;
 

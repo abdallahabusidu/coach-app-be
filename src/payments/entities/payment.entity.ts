@@ -53,7 +53,6 @@ export enum Currency {
 @Entity('payments')
 @Index(['userId', 'status'])
 @Index(['paymentMethod', 'createdAt'])
-@Index(['subscriptionId'])
 export class PaymentEntity {
   @ApiProperty({ description: 'Unique identifier for the payment' })
   @PrimaryGeneratedColumn('uuid')
@@ -147,7 +146,6 @@ export class PaymentEntity {
 
   @ApiProperty({ description: 'Related subscription ID' })
   @Column({ nullable: true })
-  @Index()
   subscriptionId?: string;
 
   @ApiProperty({ description: 'Related package ID' })

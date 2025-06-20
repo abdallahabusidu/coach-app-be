@@ -101,7 +101,6 @@ export class BusinessUserInteractionEntity {
 
   @ApiProperty({ description: 'Session ID for tracking user journey' })
   @Column({ nullable: true })
-  @Index()
   sessionId: string | null;
 
   @ApiProperty({ description: 'Interaction creation date' })

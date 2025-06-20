@@ -195,7 +195,6 @@ export class FeedPostEntity {
     enum: FeedPostVisibility,
     default: FeedPostVisibility.ALL_CLIENTS,
   })
-  @Index()
   visibility: FeedPostVisibility;
 
   @ApiProperty({ description: 'Post title' })
@@ -254,7 +253,6 @@ export class FeedPostEntity {
 
   @ApiProperty({ description: 'Scheduled publication date' })
   @Column('timestamp with time zone', { nullable: true })
-  @Index()
   scheduledAt: Date | null;
 
   @ApiProperty({ description: 'Actual publication date' })
@@ -311,7 +309,6 @@ export class FeedPostEntity {
 
   @ApiProperty({ description: 'Post creation date' })
   @CreateDateColumn()
-  @Index()
   createdAt: Date;
 
   @ApiProperty({ description: 'Post last update date' })
