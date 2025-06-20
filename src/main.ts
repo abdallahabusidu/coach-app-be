@@ -66,6 +66,7 @@ async function bootstrap() {
     .setLicense('MIT', 'https://opensource.org/licenses/MIT')
     .addServer('http://localhost:3000', 'Development Server')
     .addServer('https://api.coach-app.com', 'Production Server')
+    .addTag('Health Check', 'API health check and status endpoints')
     .addTag('Authentication', 'User authentication and authorization endpoints')
     .addTag('Verification', 'Email and phone verification endpoints')
     .addTag('Users', 'User profile and management endpoints')
