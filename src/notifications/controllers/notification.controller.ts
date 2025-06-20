@@ -34,6 +34,14 @@ import {
   BulkUpdateNotificationsDto,
 } from '../dtos/notification-query.dto';
 import { NotificationEntity } from '../entities/notification.entity';
+import {
+  ApiCreateResponses,
+  ApiCrudResponses,
+  ApiUpdateResponses,
+  ApiDeleteResponses,
+  ApiPaginatedResponse,
+  ApiAuthResponses,
+} from '../../common/decorators/api-responses.decorator';
 
 @ApiTags('Notifications')
 @ApiBearerAuth()
@@ -50,19 +58,8 @@ export class NotificationController {
     description:
       'Create a new notification for a specific user. Only admins and coaches can create notifications.',
   })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Notification created successfully',
-    type: NotificationEntity,
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input data',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Insufficient permissions',
-  })
+  @ApiCreateResponses('Notification', NotificationEntity)
+  @ApiAuthResponses()
   async createNotification(
     @Body() createNotificationDto: CreateNotificationDto,
   ): Promise<NotificationEntity> {

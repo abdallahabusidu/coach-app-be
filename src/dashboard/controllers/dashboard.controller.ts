@@ -37,6 +37,15 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/entities/user.entity';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { CoachService } from '../../coach/services/coach.service';
+import {
+  ApiCreateResponses,
+  ApiCrudResponses,
+  ApiUpdateResponses,
+  ApiDeleteResponses,
+  ApiPaginatedResponse,
+  ApiAuthResponses,
+  ApiSuccessResponse,
+} from '../../common/decorators/api-responses.decorator';
 
 @ApiTags('Dashboard')
 @ApiBearerAuth()
@@ -56,19 +65,11 @@ export class DashboardController {
     description:
       'Retrieve the daily motivational quote and personalized welcome message for coaches.',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'Welcome message and quote retrieved successfully',
-    type: DashboardWelcomeResponseDto,
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - Coach authentication required',
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden - Coach role required',
-  })
+  @ApiSuccessResponse(
+    'Welcome message and quote retrieved successfully',
+    DashboardWelcomeResponseDto,
+  )
+  @ApiAuthResponses()
   async getWelcomeMessage(
     @CurrentUser() user,
   ): Promise<DashboardWelcomeResponseDto> {

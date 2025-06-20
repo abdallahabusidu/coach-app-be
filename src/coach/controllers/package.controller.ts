@@ -27,7 +27,7 @@ import { UpdatePackageDto } from '../dtos/update-package.dto';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { FileUploadService } from '../../common/services/file-upload.service';
 
-@ApiTags('packages')
+@ApiTags('Packages')
 @Controller('packages')
 export class PackageController {
   constructor(

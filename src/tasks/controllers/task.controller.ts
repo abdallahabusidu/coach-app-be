@@ -51,11 +51,20 @@ import {
   TaskFrequency,
 } from '../entities/task.entity';
 import { SubmissionStatus } from '../entities/task-submission.entity';
+import {
+  ApiCreateResponses,
+  ApiCrudResponses,
+  ApiUpdateResponses,
+  ApiDeleteResponses,
+  ApiPaginatedResponse,
+  ApiStandardErrorResponses,
+} from '../../common/decorators/api-responses.decorator';
+import { PaginationSortingQueryDto } from '../../common/dtos/common-response.dto';
 
 @ApiTags('Tasks')
-@ApiBearerAuth('JWT-auth')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/v1/tasks')
+@Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 

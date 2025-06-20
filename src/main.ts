@@ -67,16 +67,14 @@ async function bootstrap() {
     .addServer('http://localhost:3000', 'Development Server')
     .addServer('https://api.coach-app.com', 'Production Server')
     .addTag('Authentication', 'User authentication and authorization endpoints')
+    .addTag('Verification', 'Email and phone verification endpoints')
     .addTag('Users', 'User profile and management endpoints')
     .addTag('Coaches', 'Coach profile, certification, and management endpoints')
-    .addTag(
-      'Subscribed Trainees',
-      'Trainee management, filtering, and CSV import functionality',
-    )
-    .addTag(
-      'Trainee Profile',
-      'Detailed trainee profile, progress tracking, and reports',
-    )
+    .addTag('Packages', 'Coach package creation and management')
+    .addTag('Trainee Profile', 'Trainee profile management and setup')
+    .addTag('Coach Discovery', 'Coach discovery and search functionality')
+    .addTag('Subscription Requests', 'Trainee subscription requests to coaches')
+    .addTag('Subscribed Trainees', 'Coach management of subscribed trainees')
     .addTag(
       'Messages',
       'Real-time messaging system between coaches and trainees',
@@ -86,6 +84,11 @@ async function bootstrap() {
       'Analytics, statistics, and dashboard data for coaches',
     )
     .addTag('Meals', 'Meal planning and nutrition management')
+    .addTag(
+      'Meal Plans',
+      'Comprehensive meal plan creation, assignment, and tracking',
+    )
+    .addTag('Nutrition Logs', 'Nutrition tracking and logging')
     .addTag('Workouts', 'Individual workout creation and management')
     .addTag(
       'Workout Plans',
@@ -104,6 +107,20 @@ async function bootstrap() {
       'Task assignment and completion system for trainee engagement and progress tracking',
     )
     .addTag('Notifications', 'Push notifications and alert management')
+    .addTag(
+      'Coach Feed & Posts',
+      'Social feed and content management for coaches',
+    )
+    .addTag(
+      'Promoted Businesses',
+      'Business promotion and advertising management',
+    )
+    .addTag('Payments', 'Payment processing and transaction management')
+    .addTag('Subscriptions', 'Subscription management for the platform')
+    .addTag('Coach Subscriptions', 'Coach-specific subscription management')
+    .addTag('Client Subscriptions', 'Client-specific subscription management')
+    .addTag('Coach Boosting', 'Coach profile boosting and promotion features')
+    .addTag('Products', 'Product catalog and management')
     .addBearerAuth(
       {
         type: 'http',

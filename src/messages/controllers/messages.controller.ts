@@ -43,6 +43,15 @@ import {
   MessageRequestDto,
   ConversationDto,
 } from '../dtos/message.dto';
+import {
+  ApiCreateResponses,
+  ApiCrudResponses,
+  ApiUpdateResponses,
+  ApiDeleteResponses,
+  ApiPaginatedResponse,
+  ApiAuthResponses,
+  ApiSuccessResponse,
+} from '../../common/decorators/api-responses.decorator';
 
 @ApiTags('Messages')
 @Controller('messages')
@@ -62,11 +71,8 @@ export class MessagesController {
     description:
       'Retrieve list of conversations for the current user with pagination and filtering',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Conversations retrieved successfully',
-    type: ConversationListDto,
-  })
+  @ApiPaginatedResponse(ConversationDto, 'Conversations retrieved successfully')
+  @ApiAuthResponses()
   async getConversations(
     @CurrentUser() user: any,
     @Query() filters: ConversationFilterDto,

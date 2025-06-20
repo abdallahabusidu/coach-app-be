@@ -38,8 +38,17 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/entities/user.entity';
 import { FileUploadService } from '../../common/services/file-upload.service';
 import { MediaType } from '../entities/workout.entity';
+import {
+  ApiCreateResponses,
+  ApiCrudResponses,
+  ApiUpdateResponses,
+  ApiDeleteResponses,
+  ApiPaginatedResponse,
+  ApiAuthResponses,
+  ApiFileUploadResponses,
+} from '../../common/decorators/api-responses.decorator';
 
-@ApiTags('workouts')
+@ApiTags('Workouts')
 @Controller('workouts')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -56,27 +65,8 @@ export class WorkoutController {
     summary: 'Create a new workout (Coach only)',
     description: 'Create a new workout with exercises and optional media files',
   })
-  @ApiResponse({
-    status: 201,
-    description: 'Workout created successfully',
-    type: WorkoutResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Bad request - validation failed',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - authentication required',
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden - coach role required',
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'Conflict - workout with same name already exists',
-  })
+  @ApiCreateResponses('Workout', WorkoutResponseDto)
+  @ApiAuthResponses()
   async create(
     @Body() createWorkoutDto: CreateWorkoutDto,
   ): Promise<WorkoutResponseDto> {

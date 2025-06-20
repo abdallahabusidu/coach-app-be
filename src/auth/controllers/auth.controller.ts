@@ -37,7 +37,7 @@ import { VerifyPasswordResetOtpDto } from '../dtos/verify-password-reset-otp.dto
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { AuthService } from '../services/auth.service';
 
-@ApiTags('auth')
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

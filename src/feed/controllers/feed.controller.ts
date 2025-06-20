@@ -31,6 +31,15 @@ import {
   FeedPostResponseDto,
   FeedAnalyticsDto,
 } from '../dtos/feed.dto';
+import {
+  ApiCreateResponses,
+  ApiCrudResponses,
+  ApiUpdateResponses,
+  ApiDeleteResponses,
+  ApiPaginatedResponse,
+  ApiAuthResponses,
+  ApiSuccessResponse,
+} from '../../common/decorators/api-responses.decorator';
 
 @ApiTags('Coach Feed & Posts')
 @Controller('feed')
@@ -39,11 +48,14 @@ export class FeedController {
 
   // Public endpoints (no auth required)
   @Get('public')
-  @ApiOperation({ summary: 'Get public feed posts' })
-  @ApiResponse({
-    status: 200,
-    description: 'Public feed retrieved successfully',
+  @ApiOperation({
+    summary: 'Get public feed posts',
+    description: 'Retrieve public feed posts that are visible to all users',
   })
+  @ApiPaginatedResponse(
+    FeedPostResponseDto,
+    'Public feed retrieved successfully',
+  )
   async getPublicFeed(
     @Query() query: FeedQueryDto,
   ): Promise<{ posts: FeedPostResponseDto[]; total: number }> {
@@ -51,11 +63,15 @@ export class FeedController {
   }
 
   @Get('trending')
-  @ApiOperation({ summary: 'Get trending feed posts' })
-  @ApiResponse({
-    status: 200,
-    description: 'Trending feed retrieved successfully',
+  @ApiOperation({
+    summary: 'Get trending feed posts',
+    description:
+      'Retrieve currently trending posts based on engagement metrics',
   })
+  @ApiPaginatedResponse(
+    FeedPostResponseDto,
+    'Trending feed retrieved successfully',
+  )
   async getTrendingFeed(
     @Query() query: FeedQueryDto,
   ): Promise<{ posts: FeedPostResponseDto[]; total: number }> {
@@ -63,8 +79,11 @@ export class FeedController {
   }
 
   @Get('post/:postId/public')
-  @ApiOperation({ summary: 'Get single public feed post' })
-  @ApiResponse({ status: 200, description: 'Feed post retrieved successfully' })
+  @ApiOperation({
+    summary: 'Get single public feed post',
+    description: 'Retrieve a specific public feed post by ID',
+  })
+  @ApiCrudResponses('Feed Post', FeedPostResponseDto)
   async getPublicFeedPost(
     @Param('postId') postId: string,
   ): Promise<FeedPostResponseDto> {

@@ -39,8 +39,17 @@ import { FitnessAreasDto } from '../dtos/onboarding/fitness-areas.dto';
 import { PersonalInfoDto } from '../dtos/onboarding/personal-info.dto';
 import { CertificatesUploadDto } from '../dtos/onboarding/certificates-upload.dto';
 import { OnboardingStatusResponseDto } from '../dtos/onboarding/onboarding-status-response.dto';
+import {
+  ApiCreateResponses,
+  ApiCrudResponses,
+  ApiUpdateResponses,
+  ApiDeleteResponses,
+  ApiAuthResponses,
+  ApiFileUploadResponses,
+  ApiSuccessResponse,
+} from '../../common/decorators/api-responses.decorator';
 
-@ApiTags('coaches')
+@ApiTags('Coaches')
 @Controller('coaches')
 export class CoachController {
   constructor(
@@ -49,12 +58,23 @@ export class CoachController {
   ) {}
 
   @Get()
+  @ApiOperation({
+    summary: 'Get all verified coaches',
+    description:
+      'Retrieve a list of all verified coaches available in the platform',
+  })
+  @ApiSuccessResponse('Verified coaches retrieved successfully')
   async findAll() {
     const coaches = await this.coachService.findVerifiedCoaches();
     return { coaches };
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get coach by ID',
+    description: 'Retrieve detailed information about a specific coach',
+  })
+  @ApiCrudResponses('Coach')
   async findOne(@Param('id') id: string) {
     const coach = await this.coachService.findById(id);
     return { coach };
@@ -62,6 +82,13 @@ export class CoachController {
 
   @UseGuards(JwtAuthGuard)
   @Post('profile')
+  @ApiOperation({
+    summary: 'Create coach profile',
+    description: 'Create a new coach profile for the authenticated user',
+  })
+  @ApiBearerAuth()
+  @ApiCreateResponses('Coach Profile')
+  @ApiAuthResponses()
   async createProfile(
     @CurrentUser() user,
     @Body() createCoachProfileDto: CreateCoachProfileDto,
@@ -75,6 +102,12 @@ export class CoachController {
 
   @UseGuards(JwtAuthGuard)
   @Get('my-profile')
+  @ApiOperation({
+    summary: 'Get my coach profile',
+    description: 'Retrieve the coach profile of the authenticated user',
+  })
+  @ApiBearerAuth()
+  @ApiCrudResponses('Coach Profile')
   async getMyProfile(@CurrentUser() user) {
     try {
       const coachProfile = await this.coachService.findByUserId(user.id);

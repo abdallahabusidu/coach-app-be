@@ -25,18 +25,22 @@ import {
 } from '../dtos/verify-phone.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { VerificationService } from '../services/verification.service';
+import {
+  ApiSuccessResponse,
+  ApiAuthResponses,
+} from '../../common/decorators/api-responses.decorator';
 
-@ApiTags('verification')
+@ApiTags('Verification')
 @Controller('verification')
 export class VerificationController {
   constructor(private readonly verificationService: VerificationService) {}
 
   // Email verification endpoints
-  @ApiOperation({ summary: 'Request email verification' })
-  @ApiResponse({
-    status: 200,
-    description: 'Email verification requested successfully.',
+  @ApiOperation({
+    summary: 'Request email verification',
+    description: 'Send a verification email to the provided email address',
   })
+  @ApiSuccessResponse('Email verification requested successfully')
   @Public()
   @Post('email/request')
   @HttpCode(HttpStatus.OK)
@@ -44,11 +48,11 @@ export class VerificationController {
     return await this.verificationService.requestEmailVerification(dto);
   }
 
-  @ApiOperation({ summary: 'Verify email with token' })
-  @ApiResponse({
-    status: 200,
-    description: 'Email verified successfully.',
+  @ApiOperation({
+    summary: 'Verify email with token',
+    description: 'Verify email address using the token received via email',
   })
+  @ApiSuccessResponse('Email verified successfully')
   @ApiResponse({
     status: 401,
     description: 'Invalid or expired verification token.',
@@ -62,11 +66,10 @@ export class VerificationController {
 
   @ApiOperation({
     summary: 'Generate a new email verification token (authenticated users)',
+    description: 'Generate a new verification token for authenticated users',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'Token generated successfully.',
-  })
+  @ApiSuccessResponse('Token generated successfully')
+  @ApiAuthResponses()
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('email/generate-token')

@@ -32,6 +32,14 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/entities/user.entity';
 import { MealType } from '../entities/meal.entity';
+import {
+  ApiCreateResponses,
+  ApiCrudResponses,
+  ApiUpdateResponses,
+  ApiDeleteResponses,
+  ApiPaginatedResponse,
+  ApiAuthResponses,
+} from '../../common/decorators/api-responses.decorator';
 
 @ApiTags('Meals')
 @ApiBearerAuth()
@@ -47,23 +55,8 @@ export class MealController {
     description:
       'Create a new meal with nutritional information. Only coaches can create meals.',
   })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Meal created successfully',
-    type: MealResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized - Invalid or missing authentication token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden - Only coaches can create meals',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request - Invalid meal data',
-  })
+  @ApiCreateResponses('Meal', MealResponseDto)
+  @ApiAuthResponses()
   async create(@Body() createMealDto: CreateMealDto): Promise<MealResponseDto> {
     return this.mealService.create(createMealDto);
   }
@@ -98,15 +91,8 @@ export class MealController {
     required: false,
     description: 'Minimum protein content',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Meals retrieved successfully',
-    type: PaginatedMealsResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized - Invalid or missing authentication token',
-  })
+  @ApiPaginatedResponse(MealResponseDto, 'Meals retrieved successfully')
+  @ApiAuthResponses()
   async findAll(
     @Query() queryDto: MealQueryDto,
   ): Promise<PaginatedMealsResponseDto> {
@@ -153,14 +139,7 @@ export class MealController {
     description: 'Meals retrieved successfully',
     type: [MealResponseDto],
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized - Invalid or missing authentication token',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request - Invalid meal type',
-  })
+  @ApiAuthResponses()
   async findByType(
     @Param('mealType') mealType: MealType,
   ): Promise<MealResponseDto[]> {
@@ -174,19 +153,7 @@ export class MealController {
     description: 'Retrieve detailed information about a specific meal.',
   })
   @ApiParam({ name: 'id', description: 'Meal ID (UUID)' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Meal retrieved successfully',
-    type: MealResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized - Invalid or missing authentication token',
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Meal not found',
-  })
+  @ApiCrudResponses('Meal', MealResponseDto)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<MealResponseDto> {
@@ -200,23 +167,7 @@ export class MealController {
     description: 'Update an existing meal. Only coaches can update meals.',
   })
   @ApiParam({ name: 'id', description: 'Meal ID (UUID)' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Meal updated successfully',
-    type: MealResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized - Invalid or missing authentication token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden - Only coaches can update meals',
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Meal not found',
-  })
+  @ApiUpdateResponses('Meal', MealResponseDto)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateMealDto: UpdateMealDto,
@@ -231,22 +182,7 @@ export class MealController {
     description: 'Delete an existing meal. Only coaches can delete meals.',
   })
   @ApiParam({ name: 'id', description: 'Meal ID (UUID)' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Meal deleted successfully',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized - Invalid or missing authentication token',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden - Only coaches can delete meals',
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Meal not found',
-  })
+  @ApiDeleteResponses('Meal')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<{ message: string }> {
